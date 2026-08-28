@@ -1,25 +1,21 @@
-import app from "./app";
-import { logger } from "./lib/logger";
+import express from 'express';
+import pino from 'pino';
 
-const rawPort = process.env["PORT"];
+const app = express();
+const logger = pino();
 
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
+app.use(express.json());
 
-const port = Number(rawPort);
+app.get('/', (req: any, res: any) => {
+  res.json({ status: 'ok' });
+});
 
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
+app.get('/health', (req: any, res: any) => {
+  res.json({ status: 'healthy' });
+});
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
-  }
+const port = Number(process.env.PORT) || 3000;
 
-  logger.info({ port }, "Server listening");
+app.listen(port, () => {
+  logger.info(`Server running on port ${port}`);
 });
