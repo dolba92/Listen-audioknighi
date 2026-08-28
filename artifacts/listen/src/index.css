@@ -175,3 +175,9 @@
 body {
   background-color: #f0f7f4; /* Ваш зеленый фон */
 }
+body {
+  background-image: url('/background.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
