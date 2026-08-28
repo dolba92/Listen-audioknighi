@@ -9,11 +9,11 @@ app.use(pinoHttp({ logger }));
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get('/', (req: any, res: any) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/health', (req, res) => {
+app.get('/health', (req: any, res: any) => {
   res.json({ status: 'healthy' });
 });
 
@@ -23,5 +23,4 @@ app.listen(port, () => {
   logger.info(`Server running on port ${port}`);
 });
 
-// ВАЖНО: добавляем экспорт по умолчанию для index.ts
 export default app;
