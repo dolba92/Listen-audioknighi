@@ -173,10 +173,21 @@
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 
-body {
-  background-color: transparent !important;
+/* Наш новый фон: картинка для ВСЕХ элементов */
+html, body, #root, main {
   background-image: url('https://i.postimg.cc/DZvym0Lc/background.png') !important;
   background-size: cover !important;
   background-position: center !important;
   background-attachment: fixed !important;
+  background-color: transparent !important;
+}
+
+/* Делаем прозрачными внутренние слои, чтобы сквозь них было видно картинку */
+.bg-background, .bg-card, .bg-popover, .bg-sidebar {
+  background-color: transparent !important;
+}
+
+/* Защищаем красивую логотипную карточку и другие маленькие элементы */
+.cover-art {
+  background-color: hsl(154 29% 35%) !important;
 }
