@@ -115,10 +115,11 @@
 
 @layer base {
   * { @apply border-border; }
-  html { background: hsl(var(--background)); }
+  html { background: transparent; }
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-transparent text-foreground;
     min-width: 320px;
+}
   }
   button, input, select { font: inherit; }
   button, a, input[type="range"], label { -webkit-tap-highlight-color: transparent; }
@@ -173,9 +174,9 @@
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 body {
-  background-color: transparent;
-  background-image: url('https://i.postimg.cc/DZvym0Lc/background.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background-color: transparent !important;
+  background-image: url('https://i.postimg.cc/DZvym0Lc/background.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
 }
