@@ -1,34 +1,28 @@
-import express, { type Express } from "express";
-import cors from "cors";
-import pinoHttp from "pino-http";
-import router from "./routes";
-import { logger } from "./lib/logger";
+import express from 'express';
+import pino from 'pino';
+import pinoHttp from 'pino-http';
 
-const app: Express = express();
+const app = express();
+const logger = pino();
 
-app.use(
-  pinoHttp({
-    logger,
-    serializers: {
-      req(req) {
-        return {
-          id: req.id,
-          method: req.method,
-          url: req.url?.split("?")[0],
-        };
-      },
-      res(res) {
-        return {
-          statusCode: res.statusCode,
-        };
-      },
-    },
-  }),
-);
-app.use(cors());
+// Исправляем ошибку TS2349: pino-http нужно использовать через вызов функции
+app.use(pinoHttp({ logger }));
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.use("/api", router);
+app.get('/', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
-export default app;
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy' });
+});
+
+// Здесь добавьте свои маршруты (routes), которые у вас были раньше
+// Например: app.get('/books', ...)
+
+const port = Number(process.env.PORT) || 3000;
+
+app.listen(port, () => {
+  logger.info(`Server running on port ${port}`);
+});
