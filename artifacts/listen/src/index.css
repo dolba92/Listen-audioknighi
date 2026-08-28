@@ -191,3 +191,16 @@ html, body, #root, main {
 .cover-art {
   background-color: hsl(154 29% 35%) !important;
 }
+/* Настройка левой панели навигации: полупрозрачный фон */
+aside, .bg-sidebar {
+  background-color: hsl(105 32% 91% / 0.7) !important; /* 0.7 = 70% непрозрачности */
+  backdrop-filter: blur(8px) !important; /* Эффект размытия фона */
+  border-right: 1px solid hsl(103 20% 80% / 0.5) !important;
+}
+
+/* Вернуть цвет центральному блоку (чтобы он не сливался с фоном) */
+#root > div > main, 
+.bg-card {
+  background-color: hsl(85 42% 97% / 0.85) !important; /* 85% непрозрачности */
+  backdrop-filter: blur(8px) !important;
+}
