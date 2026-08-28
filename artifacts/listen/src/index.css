@@ -173,6 +173,7 @@
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 body {
+  background-color: transparent;
   background-image: url('https://i.postimg.cc/DZvym0Lc/background.png');
   background-size: cover;
   background-position: center;
