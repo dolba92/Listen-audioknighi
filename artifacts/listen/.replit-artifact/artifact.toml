@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Listen — аудиокниги"
+description = "Личная библиотека аудиокниг: загрузка файлов и обложек, воспроизведение, сохранение позиции и скорости прослушивания."
+version = "1.0.0"
+id = "artifacts/listen"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25446
+
+[services.development]
+run = "pnpm --filter @workspace/listen run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/listen", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/listen/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25446"
+BASE_PATH = "/"
