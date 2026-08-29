@@ -15,7 +15,7 @@ type LibraryValue = ReturnType<typeof useLibrary>;
 const LibraryContext = createContext<LibraryValue | null>(null);
 function useLibraryContext() {
   const value = useContext(LibraryContext);
-  if (!value) throw new Error('Библиотека недоступна');
+  if (!value) throw new Error('Загрузите книги');
   return value;
 }
 
