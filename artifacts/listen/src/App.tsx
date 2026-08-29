@@ -41,13 +41,12 @@ function inferBookDetails(fileName: string) {
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-3 no-underline" data-testid="link-logo">
-      <span className="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-        <svg viewBox="0 0 30 30" className="size-7" fill="none" aria-label="Логотип Listen">
-          <path d="M5 7.5c3.5-1.5 6.1-.9 10 1.2v14.1c-3.6-1.9-6.7-2.2-10-.8V7.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
-          <path d="M25 7.5c-3.5-1.5-6.1-.9-10 1.2v14.1c3.6-1.9 6.7-2.2 10-.8V7.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
-          <path d="M18.2 13.4v5.2M20.9 11.9v8.3M23.5 14.4v3.3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-        </svg>
-      </span>
+      {/* Здесь мы заменили SVG на ваш логотип */}
+      <img 
+        src="/logo.png" 
+        alt="Listen" 
+        className="size-10 rounded-2xl bg-primary p-1 shadow-sm" 
+      />
       <span className="font-display text-[28px] font-semibold tracking-[-.03em]">Listen</span>
     </Link>
   );
