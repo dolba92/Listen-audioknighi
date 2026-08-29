@@ -1,5 +1,3 @@
-cat > /workspaces/Listen-audioknighi/pnpm-workspace.yaml << 'EOF'
 packages:
   - 'artifacts/*'
   - 'lib/*'
-EOF
