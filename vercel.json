@@ -1,5 +1,6 @@
 {
-  "installCommand": "cd artifacts/listen && pnpm install --no-frozen-lockfile",
-  "buildCommand": "cd artifacts/listen && pnpm run build",
-  "outputDirectory": "artifacts/listen/dist"
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "rootDirectory": "artifacts/listen"
 }
