@@ -38,6 +38,7 @@ export default function AddBook() {
       // Обложка (APIC)
       if (tags.picture) {
         const picture = tags.picture;
+        // Создаём Blob из данных обложки
         const blob = new Blob([picture.data], { type: picture.format });
         const url = URL.createObjectURL(blob);
         setCoverUrl(url);
@@ -49,7 +50,6 @@ export default function AddBook() {
     } catch (error) {
       console.error('Ошибка чтения тегов:', error);
       setStatus('❌ Не удалось прочитать метаданные. Заполните поля вручную.');
-      // Если не удалось прочитать теги — оставляем поля пустыми
     }
   };
 
