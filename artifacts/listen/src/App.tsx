@@ -73,7 +73,7 @@ function Cover({ book, size = 'md' }: { book: Pick<Book, 'title' | 'author' | 'c
     return () => URL.revokeObjectURL(url);
   }, [book.coverBlob]);
   const initials = book.title.split(/\s+/).slice(0, 2).map((word) => word[0]).join('').toUpperCase();
-  const sizeClass = size === 'lg' ? 'aspect-[3/4] w-full max-w-[360px] rounded-[26px]' : size === 'sm' ? 'size-[60px] rounded-[14px]' : 'aspect-[3/4] w-full rounded-[20px]';
+  const sizeClass = size === 'lg' ? 'aspect-[3/4] w-full max-w-[360px] rounded-[28px]' : size === 'sm' ? 'size-[60px] rounded-[14px]' : 'aspect-[3/4] w-full rounded-[20px]';
   return (
     <div className={`cover-art cover-${book.coverTone} ${sizeClass} relative shrink-0 overflow-hidden`} data-testid={`img-cover-${book.title}`}>
       {src ? <img src={src} alt={`Обложка: ${book.title}`} className="size-full object-cover" /> : (
@@ -104,7 +104,7 @@ function SkeletonHome() {
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-dashed border-primary/25 bg-card/50 px-6 py-16 text-center md:px-20" data-testid="state-empty-library">
+    <section className="relative overflow-hidden rounded-[30px] border border-dashed border-primary/25 bg-card/50 px-6 py-16 text-center md:px-20" data-testid="state-empty-library">
       <Branch />
       <span className="mx-auto mb-5 grid size-14 place-items-center rounded-2xl bg-secondary text-primary"><BookOpen className="size-6" /></span>
       <h2 className="font-display text-4xl font-semibold">Пусто</h2>
@@ -186,7 +186,7 @@ function HomePage({ onAdd }: { onAdd: () => void }) {
         <Branch />
         <p className="font-mono-ui text-[10px] font-bold uppercase tracking-[.22em] text-primary/70">Личная аудиотека</p>
         <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <div><h1 className="max-w-2xl font-display text-5xl font-semibold leading-[.92] tracking-[-.04em] sm:text-6xl">Ваше тихое место<br /><em className="font-normal text-primary">для историй.</em></h1><p className="mt-5 max-w-md text-sm leading-6 text-muted-foreground">Книги ждут вас здесь. Никаких рекомендаций — только то, что вы выбрали сами.</p></div>
+          <div><h1 className="max-w-2xl font-display text-5xl font-semibold leading-[.92] tracking-[-.04em] sm:text-6xl">Ваше место<br /><em className="font-normal text-primary">для историй.</em></h1><p className="mt-5 max-w-md text-sm leading-6 text-muted-foreground">Книги ждут вас здесь. Только то, что вы выбрали сами.</p></div>
           <button onClick={onAdd} className="inline-flex h-12 items-center justify-center gap-2 self-start rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 md:self-end" data-testid="button-add-book"><Plus className="size-4" /> Добавить книгу</button>
         </div>
       </header>
