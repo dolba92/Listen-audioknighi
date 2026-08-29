@@ -214,6 +214,12 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const audioInput = useRef<HTMLInputElement>(null);
+  
+  // Состояния для обложки
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const coverInput = useRef<HTMLInputElement>(null);
+
   const onAudioChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -229,22 +235,50 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     probe.onerror = () => URL.revokeObjectURL(url);
     probe.src = url;
   };
+
+  const onCoverChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setCoverFile(file);
+    const url = URL.createObjectURL(file);
+    setCoverPreview(url);
+  };
+
   const save = async (event: FormEvent) => {
     event.preventDefault();
     if (!book && !audio) { setFormError('Выберите аудиофайл.'); return; }
     setIsSaving(true); setFormError('');
     try {
       if (book) {
-        const patch: Partial<Book> = { title: title.trim(), author: author.trim(), narrator: narrator.trim(), description: description.trim(), coverTone: tone };
+        const patch: Partial<Book> = {
+          title: title.trim(),
+          author: author.trim(),
+          narrator: narrator.trim(),
+          description: description.trim(),
+          coverTone: tone,
+          coverBlob: coverFile || book.coverBlob,
+        };
         if (audio) { patch.audioBlob = audio; patch.audioName = audio.name; patch.audioType = audio.type; patch.duration = duration; patch.position = 0; patch.percentage = 0; patch.completed = false; }
         await updateBook(book.id, patch);
       } else if (audio) {
         const details = inferBookDetails(audio.name);
-        await addBook({ title: title.trim() || details.title, author: author.trim() || details.author, narrator: narrator.trim(), description: description.trim(), coverTone: tone, audioBlob: audio, audioName: audio.name, audioType: audio.type, duration });
+        await addBook({
+          title: title.trim() || details.title,
+          author: author.trim() || details.author,
+          narrator: narrator.trim(),
+          description: description.trim(),
+          coverTone: tone,
+          audioBlob: audio,
+          audioName: audio.name,
+          audioType: audio.type,
+          duration,
+          coverBlob: coverFile || undefined,
+        });
       }
       onClose();
     } catch { setFormError('Не удалось сохранить данные. Попробуйте ещё раз.'); } finally { setIsSaving(false); }
   };
+  
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/25 p-0 backdrop-blur-sm sm:items-center sm:p-6 animate-fade" role="dialog" aria-modal="true" data-testid="modal-book-form">
       <form onSubmit={(event) => void save(event)} className="max-h-[94dvh] w-full max-w-xl overflow-y-auto rounded-t-[28px] bg-card p-6 shadow-2xl sm:rounded-[28px] sm:p-8">
@@ -255,6 +289,21 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
            <label><span className="mb-1.5 block text-xs font-semibold">Читает</span><input value={narrator} onChange={(event) => setNarrator(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Имя чтеца" data-testid="input-book-narrator" /></label>
            <label className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Короткая заметка</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} className="min-h-20 w-full resize-y rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Что хочется помнить об этой книге?" data-testid="input-book-description" /></label></>}
            <div className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Аудиофайл</span><button type="button" onClick={() => audioInput.current?.click()} className="flex min-h-16 w-full items-center gap-3 rounded-xl border border-dashed border-primary/35 bg-secondary/40 px-4 text-left transition-colors hover:bg-secondary" data-testid="button-upload-audio"><span className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground"><FileAudio className="size-4" /></span><span className="min-w-0"><strong className="block truncate text-xs">{audio?.name ?? book?.audioName ?? 'Выбрать аудиофайл'}</strong><small className="text-[10px] text-muted-foreground">Название и обложка определятся автоматически · MP3, M4A, M4B, WAV, OGG</small></span></button><input ref={audioInput} type="file" accept=".mp3,.m4a,.m4b,.wav,.ogg,audio/*" onChange={onAudioChange} className="hidden" data-testid="input-upload-audio" /></div>
+           
+           {/* Блок для обложки */}
+           <div className="sm:col-span-2">
+             <span className="mb-1.5 block text-xs font-semibold">Обложка (необязательно)</span>
+             <button type="button" onClick={() => coverInput.current?.click()} className="flex min-h-16 w-full items-center gap-3 rounded-xl border border-dashed border-primary/35 bg-secondary/40 px-4 text-left transition-colors hover:bg-secondary">
+               <span className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground text-lg">🖼️</span>
+               <span className="min-w-0">
+                 <strong className="block truncate text-xs">{coverFile?.name || (book?.coverBlob ? 'Обложка уже есть' : 'Выбрать изображение')}</strong>
+                 <small className="text-[10px] text-muted-foreground">PNG, JPG, WebP</small>
+               </span>
+             </button>
+             <input ref={coverInput} type="file" accept="image/*" onChange={onCoverChange} className="hidden" />
+             {coverPreview && <img src={coverPreview} alt="Обложка" className="mt-3 h-24 w-24 rounded-lg object-cover border" />}
+           </div>
+
            {book && <div className="sm:col-span-2"><span className="mb-2 block text-xs font-semibold">Оттенок автоматически созданной обложки</span><div className="flex gap-2">{TONES.map((item) => <button key={item} type="button" onClick={() => setTone(item)} className={`tone-dot tone-${item} ${tone === item ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : ''}`} aria-label={`Оттенок ${item}`} data-testid={`button-tone-${item}`} />)}</div></div>}
         </div>
         {formError && <p className="mt-4 rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive" data-testid="status-form-error">{formError}</p>}
