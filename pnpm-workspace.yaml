@@ -1,2 +1,5 @@
 packages:
   - 'artifacts/*'
+
+catalog:
+  '@types/node': ^20.0.0
