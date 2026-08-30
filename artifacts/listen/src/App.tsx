@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useRef, useState, createContext, useContext, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -216,20 +215,47 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const coverInput = useRef<HTMLInputElement>(null);
 
-  const onAudioChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const onAudioChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     setAudio(file);
+
+    // Автоматически заполняем название и автора из имени файла
     if (!book) {
       const details = inferBookDetails(file.name);
       setTitle(details.title);
       setAuthor(details.author);
     }
+
+    // Определяем длительность
     const url = URL.createObjectURL(file);
     const probe = document.createElement('audio');
     probe.onloadedmetadata = () => { setDuration(probe.duration); URL.revokeObjectURL(url); };
     probe.onerror = () => URL.revokeObjectURL(url);
     probe.src = url;
+
+    // 🔥 НОВЫЙ БЛОК: Читаем ID3-теги для обложки
+    try {
+      // Динамически импортируем библиотеку id3js
+      const ID3 = await import('id3js');
+      const tags = await ID3.fromFile(file);
+      
+      // Если в тегах есть обложка
+      if (tags.picture) {
+        const picture = tags.picture;
+        // Преобразуем данные обложки в Blob
+        const blob = new Blob([picture.data], { type: picture.format });
+        const imageUrl = URL.createObjectURL(blob);
+        setCoverPreview(imageUrl);
+        // Создаём File из Blob для сохранения в IndexedDB
+        setCoverFile(new File([blob], 'cover.jpg', { type: picture.format }));
+        console.log('✅ Обложка автоматически загружена из MP3');
+      } else {
+        console.log('ℹ️ В MP3-файле нет встроенной обложки');
+      }
+    } catch (error) {
+      console.error('⚠️ Не удалось прочитать ID3-теги:', error);
+    }
   };
 
   const onCoverChange = (event: ChangeEvent<HTMLInputElement>) => {
