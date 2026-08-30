@@ -1,167 +1,149 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useLibrary } from '@/hooks/use-library';
-import * as ID3 from 'id3js';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function AddBook() {
-  const { addBook } = useLibrary();
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [coverUrl, setCoverUrl] = useState<string | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState('');
+export type Book = {
+  id: string;
+  title: string;
+  author: string;
+  narrator: string;
+  description: string;
+  duration: number;
+  position: number;
+  percentage: number;
+  completed: boolean;
+  speed: number;
+  audioBlob?: Blob;
+  audioName?: string;
+  audioType?: string;
+  coverBlob?: Blob;
+  coverTone: string;
+  createdAt: number;
+  updatedAt: number;
+};
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+export type BookDraft = Pick<Book, 'title' | 'author' | 'narrator' | 'description' | 'coverTone'> & {
+  audioBlob: Blob;
+  audioName: string;
+  audioType: string;
+  coverBlob?: Blob;
+  duration?: number;
+};
 
-    setAudioFile(file);
-    setStatus('⏳ Читаю метаданные...');
+const DB_NAME = 'listen-library';
+const STORE = 'books';
+const DB_VERSION = 1;
+const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
 
-    try {
-      const tags = await ID3.fromFile(file);
-
-      if (tags.title) {
-        setTitle(tags.title);
+function openDatabase(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = () => {
+      const database = request.result;
+      if (!database.objectStoreNames.contains(STORE)) {
+        database.createObjectStore(STORE, { keyPath: 'id' });
       }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error ?? new Error('Не удалось открыть библиотеку'));
+  });
+}
 
-      if (tags.artist) {
-        setAuthor(tags.artist);
-      }
+async function readBooks(): Promise<Book[]> {
+  const database = await openDatabase();
+  return new Promise((resolve, reject) => {
+    const request = database.transaction(STORE, 'readonly').objectStore(STORE).getAll();
+    request.onsuccess = () => resolve((request.result as Book[]).sort((a, b) => b.updatedAt - a.updatedAt));
+    request.onerror = () => reject(request.error ?? new Error('Не удалось прочитать библиотеку'));
+  });
+}
 
-      if (tags.picture) {
-        const picture = tags.picture;
-        const blob = new Blob([picture.data], { type: picture.format });
-        const url = URL.createObjectURL(blob);
-        setCoverUrl(url);
-        setCoverFile(new File([blob], 'cover.jpg', { type: picture.format }));
-        setStatus('✅ Метаданные загружены!');
-      } else {
-        setStatus('⚠️ Обложка не найдена в файле');
-      }
-    } catch (error) {
-      console.error('Ошибка чтения тегов:', error);
-      setStatus('❌ Не удалось прочитать метаданные. Заполните поля вручную.');
-    }
-  };
+async function writeBook(book: Book): Promise<void> {
+  const database = await openDatabase();
+  return new Promise((resolve, reject) => {
+    const request = database.transaction(STORE, 'readwrite').objectStore(STORE).put(book);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error ?? new Error('Не удалось сохранить книгу'));
+  });
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!audioFile) {
-      alert('Выберите аудиофайл');
-      return;
-    }
+async function removeBook(id: string): Promise<void> {
+  const database = await openDatabase();
+  return new Promise((resolve, reject) => {
+    const request = database.transaction(STORE, 'readwrite').objectStore(STORE).delete(id);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error ?? new Error('Не удалось удалить книгу'));
+  });
+}
 
+export function useLibrary() {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const booksRef = useRef<Book[]>([]);
+
+  const reload = useCallback(async () => {
     setIsLoading(true);
+    setError('');
     try {
-      const bookDraft = {
-        title: title || 'Без названия',
-        author: author || 'Неизвестный автор',
-        narrator: '',
-        description: '',
-        coverTone: 'slate',
-        audioBlob: audioFile,
-        audioName: audioFile.name,
-        audioType: audioFile.type,
-        coverBlob: coverFile || undefined,
-      };
-
-      await addBook(bookDraft);
-      alert(`Книга "${title || 'Без названия'}" успешно добавлена!`);
-      setTitle('');
-      setAuthor('');
-      setAudioFile(null);
-      setCoverFile(null);
-      setCoverUrl(null);
-      setStatus('');
-      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
-    } catch (error) {
-      console.error('Ошибка:', error);
-      alert('Произошла ошибка при добавлении книги');
+      const existing = await readBooks();
+      const personalBooks = existing.filter((book) => !book.id.startsWith('starter-'));
+      const legacyStarterBooks = existing.filter((book) => book.id.startsWith('starter-'));
+      if (legacyStarterBooks.length > 0) {
+        await Promise.all(legacyStarterBooks.map((book) => removeBook(book.id)));
+      }
+      booksRef.current = personalBooks;
+      setBooks(personalBooks);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Неизвестная ошибка библиотеки');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl">Добавить аудиокнигу</CardTitle>
-          <p className="text-sm text-gray-500">
-            Выберите MP3-файл — название, автор и обложка загрузятся автоматически из тегов файла.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="audio">MP3-файл</Label>
-              <Input
-                id="audio"
-                type="file"
-                accept="audio/mpeg,audio/mp3"
-                onChange={handleFileSelect}
-                required
-                className="cursor-pointer"
-              />
-              {status && (
-                <p className={`text-sm ${status.includes('✅') ? 'text-green-600' : status.includes('⚠️') ? 'text-yellow-600' : 'text-red-600'}`}>
-                  {status}
-                </p>
-              )}
-              {audioFile && (
-                <p className="text-sm text-gray-500">
-                  📁 {audioFile.name} ({(audioFile.size / 1024 / 1024).toFixed(2)} MB)
-                </p>
-              )}
-            </div>
+  useEffect(() => {
+    void reload();
+  }, [reload]);
 
-            <div className="space-y-2">
-              <Label htmlFor="title">Название книги</Label>
-              <Input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Автоматически из тегов"
-                required
-              />
-            </div>
+  const addBook = useCallback(async (draft: BookDraft) => {
+    const now = Date.now();
+    const storedSpeed = Number(localStorage.getItem('listen-speed') ?? '1');
+    const book: Book = {
+      ...draft,
+      id: `book-${now}-${Math.random().toString(36).slice(2, 8)}`,
+      audioBlob: draft.audioBlob,
+      duration: draft.duration ?? 0,
+      position: 0,
+      percentage: 0,
+      completed: false,
+      speed: PLAYBACK_SPEEDS.includes(storedSpeed) ? storedSpeed : 1,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await writeBook(book);
+    booksRef.current = [book, ...booksRef.current];
+    setBooks((current) => [book, ...current]);
+    return book;
+  }, []);
 
-            <div className="space-y-2">
-              <Label htmlFor="author">Автор</Label>
-              <Input
-                id="author"
-                type="text"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                placeholder="Автоматически из тегов"
-              />
-            </div>
+  const updateBook = useCallback(async (id: string, patch: Partial<Book>) => {
+    const found = booksRef.current.find((book) => book.id === id);
+    if (!found) return;
+    const updated = { ...found, ...patch, updatedAt: Date.now() };
+    await writeBook(updated);
+    booksRef.current = booksRef.current.map((book) => (book.id === id ? updated : book));
+    setBooks(booksRef.current);
+  }, []);
 
-            {coverUrl && (
-              <div className="space-y-2">
-                <Label>Обложка</Label>
-                <img
-                  src={coverUrl}
-                  alt="Обложка книги"
-                  className="w-32 h-32 object-cover rounded-lg border"
-                />
-              </div>
-            )}
+  const deleteBook = useCallback(async (id: string) => {
+    await removeBook(id);
+    booksRef.current = booksRef.current.filter((book) => book.id !== id);
+    setBooks(booksRef.current);
+  }, []);
 
-            <Button type="submit" className="w-full" disabled={isLoading || !audioFile}>
-              {isLoading ? 'Загрузка...' : 'Добавить книгу'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  const clearLibrary = useCallback(async () => {
+    await Promise.all(booksRef.current.map((book) => removeBook(book.id)));
+    booksRef.current = [];
+    setBooks([]);
+  }, []);
+
+  return { books, isLoading, error, reload, addBook, updateBook, deleteBook, clearLibrary };
 }
