@@ -174,10 +174,32 @@
 }
 
 /* ======================================== */
+/* ФОН: картинка только в светлой теме      */
+/* ======================================== */
+
+/* Светлая тема — фон с картинкой */
+html:not(.dark) body,
+html:not(.dark) #root,
+html:not(.dark) main {
+  background-image: url('https://i.postimg.cc/DZvym0Lc/background.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-color: transparent !important;
+}
+
+/* Тёмная тема — сплошной фон */
+.dark body,
+.dark #root,
+.dark main {
+  background-image: none !important;
+  background-color: #121212 !important;
+}
+
+/* ======================================== */
 /* БЕЗОПАСНАЯ ТЁМНАЯ ТЕМА (CSS-переменные) */
 /* ======================================== */
 
-/* Светлая тема (по умолчанию) */
 :root {
   --bg-body: #f5f0eb;
   --bg-card: #ffffff;
@@ -187,7 +209,6 @@
   --border-color: #e5e0db;
 }
 
-/* Тёмная тема — активируется классом .dark на html */
 .dark {
   --bg-body: #121212;
   --bg-card: #1e1e1e;
@@ -197,7 +218,6 @@
   --border-color: #333333;
 }
 
-/* Применяем переменные к элементам */
 body {
   background-color: var(--bg-body);
   color: var(--text-primary);
@@ -223,7 +243,6 @@ body {
   transition: background 0.3s ease;
 }
 
-/* Защита для карточек и панелей */
 .card,
 .bg-card {
   background-color: var(--bg-card) !important;
