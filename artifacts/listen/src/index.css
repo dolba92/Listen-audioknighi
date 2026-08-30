@@ -173,74 +173,63 @@
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 
-/* Фоновая картинка для ВСЕГО сайта */
-html, body, #root, main {
-  background-image: url('https://i.postimg.cc/DZvym0Lc/background.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
-  background-color: transparent !important;
+/* ======================================== */
+/* БЕЗОПАСНАЯ ТЁМНАЯ ТЕМА (CSS-переменные) */
+/* ======================================== */
+
+/* Светлая тема (по умолчанию) */
+:root {
+  --bg-body: #f5f0eb;
+  --bg-card: #ffffff;
+  --bg-sidebar: #f0ebe6;
+  --text-primary: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --border-color: #e5e0db;
 }
 
-/* Делаем прозрачными внутренние слои, чтобы сквозь них было видно картинку */
-.bg-background, .bg-card, .bg-popover, .bg-sidebar {
-  background-color: transparent !important;
-}
-
-/* Левая панель навигации: полупрозрачный фон */
-aside, .bg-sidebar {
-  background-color: hsl(105 32% 91% / 0.7) !important;
-  backdrop-filter: blur(8px) !important;
-  border-right: 1px solid hsl(103 20% 80% / 0.5) !important;
-}
-
-/* Центральный блок: полупрозрачный фон */
-#root > div > main, 
-.bg-card {
-  background-color: hsl(85 42% 97% / 0.85) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-/* Тёмная тема — фон и прозрачность */
+/* Тёмная тема — активируется классом .dark на html */
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --card: #171717;
-  --card-foreground: #ededed;
-  --secondary: #262626;
-  --secondary-foreground: #ededed;
-  --muted: #262626;
-  --muted-foreground: #a3a3a3;
-  --border: #262626;
-  --input: #262626;
-  --ring: #d4d4d4;
-  --primary: #ffffff;
-  --primary-foreground: #171717;
-  --destructive: #ef4444;
-  --destructive-foreground: #fef2f2;
+  --bg-body: #121212;
+  --bg-card: #1e1e1e;
+  --bg-sidebar: #1a1a1a;
+  --text-primary: #e5e5e5;
+  --text-muted: #a0a0a0;
+  --border-color: #333333;
 }
 
-.dark body {
-  background-color: #0a0a0a;
-  color: #ededed;
+/* Применяем переменные к элементам */
+body {
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.dark .bg-background {
-  background-color: #0a0a0a;
+.bg-background,
+.bg-card,
+.bg-sidebar {
+  background-color: var(--bg-card) !important;
+  transition: background-color 0.3s ease;
 }
 
-.dark .bg-card {
-  background-color: #171717;
+.border-border {
+  border-color: var(--border-color) !important;
 }
 
-.dark .bg-secondary {
-  background-color: #262626;
+.text-muted-foreground {
+  color: var(--text-muted) !important;
 }
 
-.dark .border-border {
-  border-color: #262626;
+.cover-art {
+  transition: background 0.3s ease;
 }
 
-.dark .text-muted-foreground {
-  color: #a3a3a3;
+/* Защита для карточек и панелей */
+.card,
+.bg-card {
+  background-color: var(--bg-card) !important;
+}
+
+aside,
+.bg-sidebar {
+  background-color: var(--bg-sidebar) !important;
 }
