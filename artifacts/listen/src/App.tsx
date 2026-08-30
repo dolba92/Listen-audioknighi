@@ -459,7 +459,7 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
   const navigation = [{ href: '/', label: 'Библиотека', icon: Library }, { href: '/settings', label: 'Настройки', icon: Settings }];
   return (
     <div className="listen-grain min-h-[100dvh] bg-background">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border bg-sidebar px-5 py-7 md:flex"><Logo /><p className="mt-14 px-4 font-mono-ui text-[12px] uppercase tracking-[.2em] text-muted-foreground">Навигация</p><nav className="mt-3 space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors ${location === href ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'}`} data-testid={`link-nav-${label}`}><Icon className="size-[20px]" /> {label}</Link>)}</nav><div className="mt-auto rounded-2xl bg-secondary/55 p-4"><p className="font-display text-2xl leading-none">Слушайте<br /><em className="font-normal text-primary">в своём темпе.</em></p><div className="mt-4 flex items-center gap-2 text-[12px] text-muted-foreground"><span className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground"><Leaf className="size-8" /></span> Без лишнего шума</div></div></aside>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border bg-sidebar px-5 py-7 md:flex"><Logo /><p className="mt-14 px-4 font-mono-ui text-[16px] uppercase tracking-[.2em] text-muted-foreground">Навигация</p><nav className="mt-3 space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors ${location === href ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'}`} data-testid={`link-nav-${label}`}><Icon className="size-[24px]" /> {label}</Link>)}</nav><div className="mt-auto rounded-2xl bg-secondary/55 p-4"><p className="font-display text-2xl leading-none">Слушай<br /><em className="font-normal text-primary">в своём темпе.</em></p><div className="mt-4 flex items-center gap-2 text-[12px] text-muted-foreground"><span className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground"><Leaf className="size-8" /></span> Без лишнего шума</div></div></aside>
       <header className="sticky top-0 z-20 flex h-[74px] items-center justify-between border-b border-border/70 bg-background/90 px-5 backdrop-blur-md md:hidden"><button onClick={() => setMobileOpen(!mobileOpen)} className="grid size-14 place-items-center rounded-full hover:bg-secondary" aria-label="Открыть меню" data-testid="button-mobile-menu"><Menu className="size-10" /></button><Logo /><button onClick={onAdd} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground" aria-label="Добавить книгу" data-testid="button-mobile-add"><Plus className="size-5" /></button></header>
       {mobileOpen && <div className="fixed inset-x-0 top-[74px] z-20 border-b border-border bg-sidebar p-4 shadow-md md:hidden animate-fade"><nav className="space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold ${location === href ? 'bg-sidebar-accent' : ''}`} data-testid={`link-mobile-nav-${label}`}><Icon className="size-4" /> {label}</Link>)}</nav></div>}
       <main className="px-5 pb-16 pt-10 md:ml-[248px] md:px-10 md:py-14 lg:px-16"><div className="mx-auto max-w-[1240px]">{children}</div></main>
@@ -487,3 +487,46 @@ function App() {
 }
 
 export default App;
+/* Тёмная тема */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #171717;
+  --card-foreground: #ededed;
+  --secondary: #262626;
+  --secondary-foreground: #ededed;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --border: #262626;
+  --input: #262626;
+  --ring: #d4d4d4;
+  --primary: #ffffff;
+  --primary-foreground: #171717;
+  --destructive: #ef4444;
+  --destructive-foreground: #fef2f2;
+}
+
+.dark body {
+  background-color: #0a0a0a;
+  color: #ededed;
+}
+
+.dark .bg-background {
+  background-color: #0a0a0a;
+}
+
+.dark .bg-card {
+  background-color: #171717;
+}
+
+.dark .bg-secondary {
+  background-color: #262626;
+}
+
+.dark .border-border {
+  border-color: #262626;
+}
+
+.dark .text-muted-foreground {
+  color: #a3a3a3;
+}
