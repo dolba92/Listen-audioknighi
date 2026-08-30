@@ -204,3 +204,46 @@ aside, .bg-sidebar {
   background-color: hsl(85 42% 97% / 0.85) !important; /* 85% непрозрачности */
   backdrop-filter: blur(8px) !important;
 }
+/* Тёмная тема */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #171717;
+  --card-foreground: #ededed;
+  --secondary: #262626;
+  --secondary-foreground: #ededed;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --border: #262626;
+  --input: #262626;
+  --ring: #d4d4d4;
+  --primary: #ffffff;
+  --primary-foreground: #171717;
+  --destructive: #ef4444;
+  --destructive-foreground: #fef2f2;
+}
+
+.dark body {
+  background-color: #0a0a0a;
+  color: #ededed;
+}
+
+.dark .bg-background {
+  background-color: #0a0a0a;
+}
+
+.dark .bg-card {
+  background-color: #171717;
+}
+
+.dark .bg-secondary {
+  background-color: #262626;
+}
+
+.dark .border-border {
+  border-color: #262626;
+}
+
+.dark .text-muted-foreground {
+  color: #a3a3a3;
+}
