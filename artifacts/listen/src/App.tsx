@@ -220,34 +220,27 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     if (!file) return;
     setAudio(file);
 
-    // Автоматически заполняем название и автора из имени файла
     if (!book) {
       const details = inferBookDetails(file.name);
       setTitle(details.title);
       setAuthor(details.author);
     }
 
-    // Определяем длительность
     const url = URL.createObjectURL(file);
     const probe = document.createElement('audio');
     probe.onloadedmetadata = () => { setDuration(probe.duration); URL.revokeObjectURL(url); };
     probe.onerror = () => URL.revokeObjectURL(url);
     probe.src = url;
 
-    // 🔥 НОВЫЙ БЛОК: Читаем ID3-теги для обложки
     try {
-      // Динамически импортируем библиотеку id3js
       const ID3 = await import('id3js');
       const tags = await ID3.fromFile(file);
       
-      // Если в тегах есть обложка
       if (tags.picture) {
         const picture = tags.picture;
-        // Преобразуем данные обложки в Blob
         const blob = new Blob([picture.data], { type: picture.format });
         const imageUrl = URL.createObjectURL(blob);
         setCoverPreview(imageUrl);
-        // Создаём File из Blob для сохранения в IndexedDB
         setCoverFile(new File([blob], 'cover.jpg', { type: picture.format }));
         console.log('✅ Обложка автоматически загружена из MP3');
       } else {
