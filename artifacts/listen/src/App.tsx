@@ -38,11 +38,14 @@ function inferBookDetails(fileName: string) {
   return { title: normalized, author: 'Автор не указан' };
 }
 
+// 🔥 ИСПРАВЛЕНИЕ 1: ЛОГОТИП НА ВЕСЬ КВАДРАТ
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-3 no-underline" data-testid="link-logo">
-      <span className="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-        <img src="/logo.png" alt="Listen" className="size-7 rounded-lg" />
+      {/* Родительский квадрат с фиксированным размером и скрытием лишнего */}
+      <span className="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm overflow-hidden">
+        {/* Картинка растягивается на 100% контейнера */}
+        <img src="/logo.png" alt="Listen" className="w-full h-full object-cover" />
       </span>
       <span className="font-display text-[28px] font-semibold tracking-[-.03em]">Listen</span>
     </Link>
@@ -446,12 +449,14 @@ function SettingGroup({ title, icon, children }: { title: string; icon: ReactNod
   return <section className="rounded-[24px] border border-card-border bg-card p-5 sm:p-6" data-testid={`setting-${title}`}><div className="mb-5 flex items-center gap-2 text-primary"><span className="grid size-8 place-items-center rounded-lg bg-secondary">{icon}</span><span className="font-mono-ui text-[10px] font-bold uppercase tracking-[.15em]">{title}</span></div>{children}</section>;
 }
 
+// 🔥 ИСПРАВЛЕНИЕ 2: ФОН ВОЗВРАЩЕН И НАСТРОЕН
 function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void }) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigation = [{ href: '/', label: 'Библиотека', icon: Library }, { href: '/settings', label: 'Настройки', icon: Settings }];
   return (
-    <div className="listen-grain min-h-[100dvh] bg-background">
+    // Добавлены классы bg-cover bg-center bg-no-repeat и style для вашей картинки
+    <div className="listen-grain min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/фон.jpg')" }}>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border bg-sidebar px-5 py-7 md:flex"><Logo /><p className="mt-14 px-4 font-mono-ui text-[16px] uppercase tracking-[.2em] text-muted-foreground">Навигация</p><nav className="mt-3 space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors ${location === href ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'}`} data-testid={`link-nav-${label}`}><Icon className="size-[24px]" /> {label}</Link>)}</nav><div className="mt-auto rounded-2xl bg-secondary/55 p-4"><p className="font-display text-2xl leading-none">Слушай<br /><em className="font-normal text-primary">в своём темпе.</em></p><div className="mt-4 flex items-center gap-2 text-[12px] text-muted-foreground"><span className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground"><Leaf className="size-8" /></span> Без лишнего шума</div></div></aside>
       <header className="sticky top-0 z-20 flex h-[74px] items-center justify-between border-b border-border/70 bg-background/90 px-5 backdrop-blur-md md:hidden"><button onClick={() => setMobileOpen(!mobileOpen)} className="grid size-14 place-items-center rounded-full hover:bg-secondary" aria-label="Открыть меню" data-testid="button-mobile-menu"><Menu className="size-10" /></button><Logo /><button onClick={onAdd} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground" aria-label="Добавить книгу" data-testid="button-mobile-add"><Plus className="size-5" /></button></header>
       {mobileOpen && <div className="fixed inset-x-0 top-[74px] z-20 border-b border-border bg-sidebar p-4 shadow-md md:hidden animate-fade"><nav className="space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold ${location === href ? 'bg-sidebar-accent' : ''}`} data-testid={`link-mobile-nav-${label}`}><Icon className="size-4" /> {label}</Link>)}</nav></div>}
