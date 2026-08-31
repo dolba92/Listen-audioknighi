@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -54,17 +55,25 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  /* ОСНОВНОЙ ШРИФТ: Inter (для всего текста, кнопок, меню) */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;
+  letter-spacing: -0.01em; /* Делает текст чуть плотнее и элегантнее */
 }
 
-/* Кастомные классы */
+/* ЗАГОЛОВКИ И ЛОГОТИП: Playfair Display (элегантный серифный) */
 .font-display {
-  font-family: 'Georgia', 'Times New Roman', serif;
-}
-.font-mono-ui {
-  font-family: 'Courier New', monospace;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  letter-spacing: -0.02em;
 }
 
+/* МОНОШИРИННЫЙ ШРИФТ (для мелких технических надписей и таймкодов) */
+.font-mono-ui {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  letter-spacing: 0.05em;
+}
+
+/* Анимации */
 .animate-rise {
   animation: rise 0.5s ease-out both;
 }
@@ -75,6 +84,7 @@ body {
   animation: pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Зерно/текстура */
 .listen-grain {
   position: relative;
 }
@@ -87,10 +97,50 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
+/* Глубокие тени */
 .deep-shadow {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 }
 
+/* Эффект матового стекла */
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass-strong {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Обычный фон для карточек */
+.bg-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .bg-panel {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Обложки и тона */
 .cover-art {
   display: flex;
   flex-direction: column;
@@ -115,6 +165,7 @@ body {
 .tone-ink { background: #a5b4fc; }
 .tone-moss { background: #a3e635; }
 
+/* Слайдер */
 .range-reset {
   -webkit-appearance: none;
   appearance: none;
