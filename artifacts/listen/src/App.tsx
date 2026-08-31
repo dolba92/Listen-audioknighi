@@ -38,11 +38,10 @@ function inferBookDetails(fileName: string) {
   return { title: normalized, author: 'Автор не указан' };
 }
 
-// ✅ КРУПНЫЙ ЛОГОТИП БЕЗ ПОДЛОЖКИ
+// ✅ ЛОГОТИП БЕЗ ПОДЛОЖКИ, УВЕЛИЧЕННЫЙ
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-3 no-underline" data-testid="link-logo">
-      {/* h-20 = 80px, чтобы логотип был крупным и заметным */}
       <img 
         src="/logo.png" 
         alt="Listen" 
@@ -450,24 +449,23 @@ function SettingGroup({ title, icon, children }: { title: string; icon: ReactNod
   return <section className="rounded-[24px] border border-card-border bg-card p-5 sm:p-6" data-testid={`setting-${title}`}><div className="mb-5 flex items-center gap-2 text-primary"><span className="grid size-8 place-items-center rounded-lg bg-secondary">{icon}</span><span className="font-mono-ui text-[10px] font-bold uppercase tracking-[.15em]">{title}</span></div>{children}</section>;
 }
 
-// ✅ ФОН ЧЕРЕЗ ИНЛАЙН-СТИЛЬ (РАБОТАЕТ НА 100%)
+// ✅ ФОН И ПОЛУПРОЗРАЧНАЯ ПАНЕЛЬ
 function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void }) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigation = [{ href: '/', label: 'Библиотека', icon: Library }, { href: '/settings', label: 'Настройки', icon: Settings }];
 
-  // Инлайн-стили для фона, чтобы Tailwind не мешал
+  // Прописываем фон напрямую через JS-объект (работает всегда, без Tailwind)
   const backgroundStyle = {
     backgroundImage: "url('/background.png')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor: '#f5f0ea'
+    backgroundRepeat: 'no-repeat'
   };
 
   return (
     <div className="listen-grain min-h-[100dvh]" style={backgroundStyle}>
-      {/* Полупрозрачная навигация с эффектом стекла (просвечивает фон) */}
+      {/* Полупрозрачная навигация (bg-sidebar/70 + backdrop-blur-md) */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border bg-sidebar/70 px-5 py-7 backdrop-blur-md md:flex">
         <Logo />
         <p className="mt-14 px-4 font-mono-ui text-[16px] uppercase tracking-[.2em] text-muted-foreground">Навигация</p>
