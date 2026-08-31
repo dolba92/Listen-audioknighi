@@ -38,7 +38,6 @@ function inferBookDetails(fileName: string) {
   return { title: normalized, author: 'Автор не указан' };
 }
 
-// ✅ ЛОГОТИП БЕЗ ПОДЛОЖКИ, УВЕЛИЧЕННЫЙ
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-3 no-underline" data-testid="link-logo">
@@ -47,17 +46,9 @@ function Logo() {
         alt="Listen" 
         className="h-20 w-auto object-contain"
       />
+      {/* Красивый шрифт для названия */}
       <span className="font-display text-[32px] font-semibold tracking-[-.03em]">Listen</span>
     </Link>
-  );
-}
-
-function Branch() {
-  return (
-    <svg className="pointer-events-none absolute right-8 top-6 hidden h-28 w-36 text-primary/20 md:block" viewBox="0 0 140 110" fill="none">
-      <path d="M126 7C100 18 91 36 85 58c-5 20-18 35-39 44" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M103 22c8-8 16-8 24-7-5 7-12 10-24 7ZM91 39c8-5 15-4 21-2-5 5-12 7-21 2ZM75 65c6-7 13-9 20-9-3 7-10 11-20 9ZM57 84c5-6 11-7 17-7-3 6-8 9-17 7Z" fill="currentColor" />
-    </svg>
   );
 }
 
@@ -96,16 +87,15 @@ function SkeletonHome() {
   return (
     <div className="space-y-9 animate-fade" data-testid="status-loading">
       <div className="space-y-3"><div className="h-3 w-32 animate-pulse-soft rounded bg-secondary" /><div className="h-14 w-3/4 max-w-xl animate-pulse-soft rounded-xl bg-secondary" /></div>
-      <div className="h-64 animate-pulse-soft rounded-[28px] bg-card/70" />
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">{[1, 2, 3, 4].map((item) => <div key={item} className="aspect-[3/4] animate-pulse-soft rounded-[20px] bg-card/70" />)}</div>
+      <div className="h-64 animate-pulse-soft rounded-[28px] bg-panel" />
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">{[1, 2, 3, 4].map((item) => <div key={item} className="aspect-[3/4] animate-pulse-soft rounded-[20px] bg-panel" />)}</div>
     </div>
   );
 }
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-dashed border-primary/25 bg-card/50 px-6 py-16 text-center md:px-20" data-testid="state-empty-library">
-      <Branch />
+    <section className="relative overflow-hidden rounded-[28px] border border-dashed border-primary/25 bg-panel px-6 py-16 text-center md:px-20" data-testid="state-empty-library">
       <span className="mx-auto mb-5 grid size-14 place-items-center rounded-2xl bg-secondary text-primary"><BookOpen className="size-6" /></span>
       <h2 className="font-display text-4xl font-semibold">Здесь пока пусто</h2>
       <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">Добавьте аудиокнигу — она останется у вас, даже если вы закроете браузер.</p>
@@ -119,7 +109,7 @@ function BookMenu({ book, onEdit, onDelete }: { book: Book; onEdit: () => void; 
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)} className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" aria-label="Действия с книгой" data-testid={`button-menu-${book.id}`}><MoreHorizontal className="size-5" /></button>
-      {open && <div className="absolute right-0 top-11 z-20 w-44 rounded-2xl border border-card-border bg-card p-1.5 shadow-lg animate-fade" data-testid={`menu-book-${book.id}`}>
+      {open && <div className="absolute right-0 top-11 z-20 w-44 rounded-2xl border border-card-border glass-strong p-1.5 shadow-lg animate-fade" data-testid={`menu-book-${book.id}`}>
         <button onClick={() => { setOpen(false); onEdit(); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs hover:bg-secondary" data-testid={`button-edit-${book.id}`}><Pencil className="size-3.5" /> Изменить данные</button>
         <button onClick={() => { setOpen(false); onDelete(); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs text-destructive hover:bg-destructive/10" data-testid={`button-delete-${book.id}`}><Trash2 className="size-3.5" /> Удалить книгу</button>
       </div>}
@@ -134,7 +124,7 @@ function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () =
         <div className="relative">
           <Cover book={book} />
           <div className="absolute inset-x-0 bottom-0 p-2.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-            <div className="rounded-xl bg-foreground/80 px-3 py-2 text-center text-[11px] font-semibold text-card">Открыть книгу</div>
+            <div className="rounded-xl glass-strong px-3 py-2 text-center text-[11px] font-semibold text-card">Открыть книгу</div>
           </div>
           {book.completed && <span className="absolute right-3 top-3 grid size-7 place-items-center rounded-full bg-card text-primary shadow-sm"><Check className="size-4" /></span>}
         </div>
@@ -178,12 +168,11 @@ function HomePage({ onAdd }: { onAdd: () => void }) {
     if (window.confirm(`Удалить «${book.title}» из библиотеки?`)) await deleteBook(book.id);
   };
   if (isLoading) return <SkeletonHome />;
-  if (error) return <section className="rounded-[28px] bg-card p-10 text-center" data-testid="state-error"><CircleHelp className="mx-auto size-8 text-destructive" /><h2 className="mt-4 font-display text-3xl font-semibold">Не удалось открыть библиотеку</h2><p className="mt-2 text-sm text-muted-foreground">{error}</p><button onClick={() => void reload()} className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-retry"><RotateCcw className="size-4" /> Повторить</button></section>;
+  if (error) return <section className="rounded-[28px] bg-panel p-10 text-center" data-testid="state-error"><CircleHelp className="mx-auto size-8 text-destructive" /><h2 className="mt-4 font-display text-3xl font-semibold">Не удалось открыть библиотеку</h2><p className="mt-2 text-sm text-muted-foreground">{error}</p><button onClick={() => void reload()} className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-retry"><RotateCcw className="size-4" /> Повторить</button></section>;
   if (books.length === 0) return <EmptyState onAdd={onAdd} />;
   return (
     <div className="space-y-12">
       <header className="relative animate-rise">
-        <Branch />
         <p className="font-mono-ui text-[10px] font-bold uppercase tracking-[.22em] text-primary/70">Личная аудиотека</p>
         <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div><h1 className="max-w-2xl font-display text-5xl font-semibold leading-[.92] tracking-[-.04em] sm:text-6xl">Ваше тихое место<br /><em className="font-normal text-primary">для историй.</em></h1><p className="mt-5 max-w-md text-sm leading-6 text-muted-foreground">Книги ждут вас здесь. Никаких рекомендаций — только то, что вы выбрали сами.</p></div>
@@ -192,8 +181,8 @@ function HomePage({ onAdd }: { onAdd: () => void }) {
       </header>
       {inProgress[0] && <ContinueCard book={inProgress[0]} onOpen={() => setLocation(`/player/${inProgress[0].id}`)} />}
       <section data-testid="section-collection">
-        <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><p className="font-mono-ui text-[10px] uppercase tracking-[.18em] text-muted-foreground">Ваша полка</p><h2 className="mt-1 font-display text-4xl font-semibold">Все книги <span className="font-sans text-base font-medium text-muted-foreground">/ {books.length}</span></h2></div><label className="flex h-11 w-full items-center gap-2 rounded-full border border-border bg-card px-4 text-sm text-muted-foreground sm:w-60"><Search className="size-4" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти книгу" className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground/70" data-testid="input-search" /></label></div>
-        {filtered.length > 0 ? <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{filtered.map((book) => <BookCard key={book.id} book={book} onOpen={() => setLocation(`/player/${book.id}`)} onEdit={() => setEditing(book)} onDelete={() => void confirmDelete(book)} />)}</div> : <div className="rounded-2xl bg-card/60 px-6 py-10 text-center text-sm text-muted-foreground" data-testid="state-search-empty">По вашему запросу ничего не найдено.</div>}
+        <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><p className="font-mono-ui text-[10px] uppercase tracking-[.18em] text-muted-foreground">Ваша полка</p><h2 className="mt-1 font-display text-4xl font-semibold">Все книги <span className="font-sans text-base font-medium text-muted-foreground">/ {books.length}</span></h2></div><label className="flex h-11 w-full items-center gap-2 rounded-full border border-border glass px-4 text-sm text-muted-foreground sm:w-60"><Search className="size-4" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти книгу" className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground/70" data-testid="input-search" /></label></div>
+        {filtered.length > 0 ? <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{filtered.map((book) => <BookCard key={book.id} book={book} onOpen={() => setLocation(`/player/${book.id}`)} onEdit={() => setEditing(book)} onDelete={() => void confirmDelete(book)} />)}</div> : <div className="rounded-2xl glass px-6 py-10 text-center text-sm text-muted-foreground" data-testid="state-search-empty">По вашему запросу ничего не найдено.</div>}
       </section>
       {completed.length > 0 && <section data-testid="section-completed"><div className="mb-5 flex items-end justify-between"><div><p className="font-mono-ui text-[10px] uppercase tracking-[.18em] text-muted-foreground">Сохранено в памяти</p><h2 className="mt-1 font-display text-4xl font-semibold">Завершённые</h2></div><span className="hidden items-center gap-1.5 text-xs text-primary sm:flex"><Check className="size-4" /> Всё прослушано</span></div><div className="grid grid-cols-2 gap-4 sm:grid-cols-4">{completed.map((book) => <BookCard key={book.id} book={book} onOpen={() => setLocation(`/player/${book.id}`)} onEdit={() => setEditing(book)} onDelete={() => void confirmDelete(book)} />)}</div></section>}
       {editing && <BookFormModal book={editing} onClose={() => setEditing(null)} />}
@@ -299,7 +288,7 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
 
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/25 p-0 backdrop-blur-sm sm:items-center sm:p-6 animate-fade" role="dialog" aria-modal="true" data-testid="modal-book-form">
-      <form onSubmit={(event) => void save(event)} className="max-h-[94dvh] w-full max-w-xl overflow-y-auto rounded-t-[28px] bg-card p-6 shadow-2xl sm:rounded-[28px] sm:p-8">
+      <form onSubmit={(event) => void save(event)} className="max-h-[94dvh] w-full max-w-xl overflow-y-auto rounded-t-[28px] glass-strong p-6 shadow-2xl sm:rounded-[28px] sm:p-8">
         <div className="flex items-start justify-between"><div><p className="font-mono-ui text-[10px] uppercase tracking-[.18em] text-primary/70">{book ? 'Редактирование' : 'Новая запись'}</p><h2 className="mt-2 font-display text-4xl font-semibold">{book ? 'Изменить книгу' : 'Добавить книгу'}</h2></div><button type="button" onClick={onClose} className="grid size-10 place-items-center rounded-full hover:bg-secondary" aria-label="Закрыть" data-testid="button-close-modal"><X className="size-5" /></button></div>
          <div className="mt-7 grid gap-4 sm:grid-cols-2">
            {book && <><label className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Название книги</span><input value={title} onChange={(event) => setTitle(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-ring/30" placeholder="Название книги" data-testid="input-book-title" /></label>
@@ -403,7 +392,7 @@ function PlayerPage() {
     setSpeed(next);
     if (book) void updateBook(book.id, { speed: next });
   };
-  if (!book) return <section className="rounded-[28px] bg-card p-12 text-center" data-testid="state-player-error"><CircleHelp className="mx-auto size-8 text-primary" /><h1 className="mt-4 font-display text-4xl font-semibold">Книга не найдена</h1><button onClick={() => setLocation('/')} className="mt-6 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-back-library">Вернуться в библиотеку</button></section>;
+  if (!book) return <section className="rounded-[28px] bg-panel p-12 text-center" data-testid="state-player-error"><CircleHelp className="mx-auto size-8 text-primary" /><h1 className="mt-4 font-display text-4xl font-semibold">Книга не найдена</h1><button onClick={() => setLocation('/')} className="mt-6 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-back-library">Вернуться в библиотеку</button></section>;
   const percentage = duration > 0 ? (current / duration) * 100 : book.percentage;
   return (
     <div className="mx-auto max-w-5xl animate-rise">
@@ -417,7 +406,7 @@ function PlayerPage() {
         </div>
       </div>
        {src && <audio ref={audioRef} src={src} preload="auto" onLoadedMetadata={(event) => { const value = event.currentTarget.duration; if (Number.isFinite(value) && value > 0) { durationRef.current = value; setDuration(value); if (!book.duration) void updateBook(book.id, { duration: value }); } const start = Math.min(Math.max(book.position, 0), Number.isFinite(value) && value > 0 ? value : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; }} onCanPlay={(event) => { if (!restoredPositionRef.current) { const start = Math.min(Math.max(book.position, 0), Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; } }} onTimeUpdate={(event) => { const value = event.currentTarget.currentTime; positionRef.current = value; setCurrent(value); if (Date.now() - persistAt.current > 1200) { persistAt.current = Date.now(); persistPosition(value); } }} onPlay={() => { setNotice(''); setPlaying(true); }} onPause={(event) => { setPlaying(false); persistPosition(event.currentTarget.currentTime); }} onEnded={() => { setPlaying(false); persistPosition(durationRef.current || duration, true); }} onError={() => { setPlaying(false); setNotice('Не удалось прочитать аудиофайл. Выберите этот файл заново в редактировании книги.'); }} data-testid="audio-player" />}
-      <div className="mt-14 grid gap-4 border-t border-border pt-7 sm:grid-cols-3"><div className="rounded-2xl bg-card/60 p-4"><Clock3 className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{formatTime(duration)}</p><p className="mt-1 text-[11px] text-muted-foreground">Полная длительность</p></div><div className="rounded-2xl bg-card/60 p-4"><SlidersHorizontal className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{Math.round(percentage)}%</p><p className="mt-1 text-[11px] text-muted-foreground">Уже прослушано</p></div><div className="rounded-2xl bg-card/60 p-4"><Headphones className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{book.completed ? 'завершено' : 'в процессе'}</p><p className="mt-1 text-[11px] text-muted-foreground">Состояние книги</p></div></div>
+      <div className="mt-14 grid gap-4 border-t border-border pt-7 sm:grid-cols-3"><div className="rounded-2xl bg-panel p-4"><Clock3 className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{formatTime(duration)}</p><p className="mt-1 text-[11px] text-muted-foreground">Полная длительность</p></div><div className="rounded-2xl bg-panel p-4"><SlidersHorizontal className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{Math.round(percentage)}%</p><p className="mt-1 text-[11px] text-muted-foreground">Уже прослушано</p></div><div className="rounded-2xl bg-panel p-4"><Headphones className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{book.completed ? 'завершено' : 'в процессе'}</p><p className="mt-1 text-[11px] text-muted-foreground">Состояние книги</p></div></div>
     </div>
   );
 }
@@ -446,16 +435,14 @@ function SettingsPage() {
 }
 
 function SettingGroup({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
-  return <section className="rounded-[24px] border border-card-border bg-card p-5 sm:p-6" data-testid={`setting-${title}`}><div className="mb-5 flex items-center gap-2 text-primary"><span className="grid size-8 place-items-center rounded-lg bg-secondary">{icon}</span><span className="font-mono-ui text-[10px] font-bold uppercase tracking-[.15em]">{title}</span></div>{children}</section>;
+  return <section className="rounded-[24px] border border-card-border bg-panel p-5 sm:p-6" data-testid={`setting-${title}`}><div className="mb-5 flex items-center gap-2 text-primary"><span className="grid size-8 place-items-center rounded-lg bg-secondary">{icon}</span><span className="font-mono-ui text-[10px] font-bold uppercase tracking-[.15em]">{title}</span></div>{children}</section>;
 }
 
-// ✅ ФОН И ПОЛУПРОЗРАЧНАЯ ПАНЕЛЬ
 function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void }) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigation = [{ href: '/', label: 'Библиотека', icon: Library }, { href: '/settings', label: 'Настройки', icon: Settings }];
 
-  // Прописываем фон напрямую через JS-объект (работает всегда, без Tailwind)
   const backgroundStyle = {
     backgroundImage: "url('/background.png')",
     backgroundSize: 'cover',
@@ -465,8 +452,7 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
 
   return (
     <div className="listen-grain min-h-[100dvh]" style={backgroundStyle}>
-      {/* Полупрозрачная навигация (bg-sidebar/70 + backdrop-blur-md) */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border bg-sidebar/70 px-5 py-7 backdrop-blur-md md:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border glass px-5 py-7 md:flex">
         <Logo />
         <p className="mt-14 px-4 font-mono-ui text-[16px] uppercase tracking-[.2em] text-muted-foreground">Навигация</p>
         <nav className="mt-3 space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors ${location === href ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground'}`} data-testid={`link-nav-${label}`}><Icon className="size-[24px]" /> {label}</Link>)}</nav>
@@ -474,7 +460,7 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
       </aside>
 
       <header className="sticky top-0 z-20 flex h-[74px] items-center justify-between border-b border-border/70 bg-background/90 px-5 backdrop-blur-md md:hidden"><button onClick={() => setMobileOpen(!mobileOpen)} className="grid size-14 place-items-center rounded-full hover:bg-secondary" aria-label="Открыть меню" data-testid="button-mobile-menu"><Menu className="size-10" /></button><Logo /><button onClick={onAdd} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground" aria-label="Добавить книгу" data-testid="button-mobile-add"><Plus className="size-5" /></button></header>
-      {mobileOpen && <div className="fixed inset-x-0 top-[74px] z-20 border-b border-border bg-sidebar p-4 shadow-md md:hidden animate-fade"><nav className="space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold ${location === href ? 'bg-sidebar-accent' : ''}`} data-testid={`link-mobile-nav-${label}`}><Icon className="size-4" /> {label}</Link>)}</nav></div>}
+      {mobileOpen && <div className="fixed inset-x-0 top-[74px] z-20 border-b border-border glass p-4 shadow-md md:hidden animate-fade"><nav className="space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold ${location === href ? 'bg-sidebar-accent' : ''}`} data-testid={`link-mobile-nav-${label}`}><Icon className="size-4" /> {label}</Link>)}</nav></div>}
       <main className="px-5 pb-16 pt-10 md:ml-[248px] md:px-10 md:py-14 lg:px-16"><div className="mx-auto max-w-[1240px]">{children}</div></main>
     </div>
   );
@@ -488,7 +474,7 @@ function ListenApp() {
 
 function NotFoundPage() {
   const [, setLocation] = useLocation();
-  return <section className="mx-auto max-w-lg rounded-[28px] bg-card p-12 text-center"><h1 className="font-display text-6xl">Тишина</h1><p className="mt-3 text-sm text-muted-foreground">Такой страницы нет, но книги на месте.</p><button onClick={() => setLocation('/')} className="mt-6 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-not-found-home">В библиотеку</button></section>;
+  return <section className="mx-auto max-w-lg rounded-[28px] bg-panel p-12 text-center"><h1 className="font-display text-6xl">Тишина</h1><p className="mt-3 text-sm text-muted-foreground">Такой страницы нет, но книги на месте.</p><button onClick={() => setLocation('/')} className="mt-6 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-not-found-home">В библиотеку</button></section>;
 }
 
 function Router() {
