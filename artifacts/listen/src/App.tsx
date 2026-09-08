@@ -224,46 +224,23 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     probe.onerror = () => URL.revokeObjectURL(url);
     probe.src = url;
 
-        try {
+    try {
       const { parseBlob } = await import('music-metadata');
-
-      const metadata = await parseBlob(file, {
-        skipCovers: false,
-      });
-
+      const metadata = await parseBlob(file, { skipCovers: false });
       console.log('🎵 Метаданные:', metadata);
 
       const pictures = metadata.common.picture ?? [];
-      const picture =
-        pictures.find((item) =>
-          item.type?.toLowerCase().includes('front')
-        ) ?? pictures[0];
+      const picture = pictures.find((item) => item.type?.toLowerCase().includes('front')) ?? pictures[0];
 
       if (picture?.data) {
         const mimeType = picture.format || 'image/jpeg';
-
-        const imageBytes = new Uint8Array(picture.data);
-
-        const blob = new Blob([imageBytes], {
-          type: mimeType,
-        });
-
+        const imageBytes = Uint8Array.from(picture.data);
+        const blob = new Blob([imageBytes.buffer], { type: mimeType });
         const imageUrl = URL.createObjectURL(blob);
-
         setCoverPreview(imageUrl);
 
-        const extension =
-          mimeType.includes('png')
-            ? 'png'
-            : mimeType.includes('webp')
-              ? 'webp'
-              : 'jpg';
-
-        setCoverFile(
-          new File([blob], `cover.${extension}`, {
-            type: mimeType,
-          }),
-        );
+        const extension = mimeType.includes('png') ? 'png' : mimeType.includes('webp') ? 'webp' : 'jpg';
+        setCoverFile(new File([blob], `cover.${extension}`, { type: mimeType }));
 
         console.log('✅ Встроенная обложка найдена:', {
           format: picture.format,
@@ -274,19 +251,7 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
         console.log('ℹ️ Во встроенных метаданных нет обложки');
       }
     } catch (error) {
-      console.error(
-        '⚠️ Не удалось прочитать метаданные аудиофайла:',
-        error,
-      );
-    }
-  );
-
-  console.log('✅ Обложка автоматически загружена из аудиофайла');
-} else {
-  console.log('ℹ️ Во встроенных тегах нет обложки');
-}
-    } catch (error) {
-      console.error('⚠️ Не удалось прочитать ID3-теги:', error);
+      console.error('⚠️ Не удалось прочитать метаданные аудиофайла:', error);
     }
   };
 
@@ -337,25 +302,25 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/25 p-0 backdrop-blur-sm sm:items-center sm:p-6 animate-fade" role="dialog" aria-modal="true" data-testid="modal-book-form">
       <form onSubmit={(event) => void save(event)} className="max-h-[94dvh] w-full max-w-xl overflow-y-auto rounded-t-[28px] glass-strong p-6 shadow-2xl sm:rounded-[28px] sm:p-8">
         <div className="flex items-start justify-between"><div><p className="font-mono-ui text-[10px] uppercase tracking-[.18em] text-primary/70">{book ? 'Редактирование' : 'Новая запись'}</p><h2 className="mt-2 font-display text-4xl font-semibold">{book ? 'Изменить книгу' : 'Добавить книгу'}</h2></div><button type="button" onClick={onClose} className="grid size-10 place-items-center rounded-full hover:bg-secondary" aria-label="Закрыть" data-testid="button-close-modal"><X className="size-5" /></button></div>
-         <div className="mt-7 grid gap-4 sm:grid-cols-2">
-           {book && <><label className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Название книги</span><input value={title} onChange={(event) => setTitle(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-ring/30" placeholder="Название книги" data-testid="input-book-title" /></label>
-           <label><span className="mb-1.5 block text-xs font-semibold">Автор</span><input value={author} onChange={(event) => setAuthor(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Имя автора" data-testid="input-book-author" /></label>
-           <label><span className="mb-1.5 block text-xs font-semibold">Читает</span><input value={narrator} onChange={(event) => setNarrator(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Имя чтеца" data-testid="input-book-narrator" /></label>
-           <label className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Короткая заметка</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} className="min-h-20 w-full resize-y rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Что хочется помнить об этой книге?" data-testid="input-book-description" /></label></>}
-           <div className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Аудиофайл</span><button type="button" onClick={() => audioInput.current?.click()} className="flex min-h-16 w-full items-center gap-3 rounded-xl border border-dashed border-primary/35 bg-secondary/40 px-4 text-left transition-colors hover:bg-secondary" data-testid="button-upload-audio"><span className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground"><FileAudio className="size-4" /></span><span className="min-w-0"><strong className="block truncate text-xs">{audio?.name ?? book?.audioName ?? 'Выбрать аудиофайл'}</strong><small className="text-[10px] text-muted-foreground">Название и обложка определятся автоматически · MP3, M4A, M4B, WAV, OGG</small></span></button><input ref={audioInput} type="file" accept=".mp3,.m4a,.m4b,.wav,.ogg,audio/*" onChange={onAudioChange} className="hidden" data-testid="input-upload-audio" /></div>
-           <div className="sm:col-span-2">
-             <span className="mb-1.5 block text-xs font-semibold">Обложка</span>
-             <button type="button" onClick={() => coverInput.current?.click()} className="flex min-h-16 w-full items-center gap-3 rounded-xl border border-dashed border-primary/35 bg-secondary/40 px-4 text-left transition-colors hover:bg-secondary">
-               <span className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground text-lg">🖼️</span>
-               <span className="min-w-0">
-                 <strong className="block truncate text-xs">{coverFile?.name || (book?.coverBlob ? 'Обложка уже есть' : 'Выбрать изображение')}</strong>
-                 <small className="text-[10px] text-muted-foreground">PNG, JPG, WebP</small>
-               </span>
-             </button>
-             <input ref={coverInput} type="file" accept="image/*" onChange={onCoverChange} className="hidden" />
-             {coverPreview && <img src={coverPreview} alt="Обложка" className="mt-3 h-24 w-24 rounded-lg object-cover border" />}
-           </div>
-           {book && <div className="sm:col-span-2"><span className="mb-2 block text-xs font-semibold">Оттенок автоматически созданной обложки</span><div className="flex gap-2">{TONES.map((item) => <button key={item} type="button" onClick={() => setTone(item)} className={`tone-dot tone-${item} ${tone === item ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : ''}`} aria-label={`Оттенок ${item}`} data-testid={`button-tone-${item}`} />)}</div></div>}
+        <div className="mt-7 grid gap-4 sm:grid-cols-2">
+          {book && <><label className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Название книги</span><input value={title} onChange={(event) => setTitle(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none transition-shadow focus:ring-2 focus:ring-ring/30" placeholder="Название книги" data-testid="input-book-title" /></label>
+          <label><span className="mb-1.5 block text-xs font-semibold">Автор</span><input value={author} onChange={(event) => setAuthor(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Имя автора" data-testid="input-book-author" /></label>
+          <label><span className="mb-1.5 block text-xs font-semibold">Читает</span><input value={narrator} onChange={(event) => setNarrator(event.target.value)} className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Имя чтеца" data-testid="input-book-narrator" /></label>
+          <label className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Короткая заметка</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} className="min-h-20 w-full resize-y rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring/30" placeholder="Что хочется помнить об этой книге?" data-testid="input-book-description" /></label></>}
+          <div className="sm:col-span-2"><span className="mb-1.5 block text-xs font-semibold">Аудиофайл</span><button type="button" onClick={() => audioInput.current?.click()} className="flex min-h-16 w-full items-center gap-3 rounded-xl border border-dashed border-primary/35 bg-secondary/40 px-4 text-left transition-colors hover:bg-secondary" data-testid="button-upload-audio"><span className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground"><FileAudio className="size-4" /></span><span className="min-w-0"><strong className="block truncate text-xs">{audio?.name ?? book?.audioName ?? 'Выбрать аудиофайл'}</strong><small className="text-[10px] text-muted-foreground">Название и обложка определятся автоматически · MP3, M4A, M4B, WAV, OGG</small></span></button><input ref={audioInput} type="file" accept=".mp3,.m4a,.m4b,.wav,.ogg,audio/*" onChange={onAudioChange} className="hidden" data-testid="input-upload-audio" /></div>
+          <div className="sm:col-span-2">
+            <span className="mb-1.5 block text-xs font-semibold">Обложка</span>
+            <button type="button" onClick={() => coverInput.current?.click()} className="flex min-h-16 w-full items-center gap-3 rounded-xl border border-dashed border-primary/35 bg-secondary/40 px-4 text-left transition-colors hover:bg-secondary">
+              <span className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground text-lg">🖼️</span>
+              <span className="min-w-0">
+                <strong className="block truncate text-xs">{coverFile?.name || (book?.coverBlob ? 'Обложка уже есть' : 'Выбрать изображение')}</strong>
+                <small className="text-[10px] text-muted-foreground">PNG, JPG, WebP</small>
+              </span>
+            </button>
+            <input ref={coverInput} type="file" accept="image/*" onChange={onCoverChange} className="hidden" />
+            {coverPreview && <img src={coverPreview} alt="Обложка" className="mt-3 h-24 w-24 rounded-lg object-cover border" />}
+          </div>
+          {book && <div className="sm:col-span-2"><span className="mb-2 block text-xs font-semibold">Оттенок автоматически созданной обложки</span><div className="flex gap-2">{TONES.map((item) => <button key={item} type="button" onClick={() => setTone(item)} className={`tone-dot tone-${item} ${tone === item ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : ''}`} aria-label={`Оттенок ${item}`} data-testid={`button-tone-${item}`} />)}</div></div>}
         </div>
         {formError && <p className="mt-4 rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive" data-testid="status-form-error">{formError}</p>}
         <div className="mt-7 flex gap-3"><button type="button" onClick={onClose} className="h-12 flex-1 rounded-full border border-border text-sm font-semibold hover:bg-secondary" data-testid="button-cancel-form">Отмена</button><button type="submit" disabled={isSaving} className="h-12 flex-1 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-60" data-testid="button-save-book">{isSaving ? 'Сохраняем…' : book ? 'Сохранить изменения' : 'Добавить в библиотеку'}</button></div>
@@ -452,7 +417,7 @@ function PlayerPage() {
           {notice && <button onClick={() => setNotice('')} className="mt-5 flex w-full items-center justify-between rounded-xl bg-accent/20 px-4 py-3 text-left text-xs text-foreground" data-testid="status-player-notice"><span>{notice}</span><X className="size-4" /></button>}
         </div>
       </div>
-       {src && <audio ref={audioRef} src={src} preload="auto" onLoadedMetadata={(event) => { const value = event.currentTarget.duration; if (Number.isFinite(value) && value > 0) { durationRef.current = value; setDuration(value); if (!book.duration) void updateBook(book.id, { duration: value }); } const start = Math.min(Math.max(book.position, 0), Number.isFinite(value) && value > 0 ? value : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; }} onCanPlay={(event) => { if (!restoredPositionRef.current) { const start = Math.min(Math.max(book.position, 0), Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; } }} onTimeUpdate={(event) => { const value = event.currentTarget.currentTime; positionRef.current = value; setCurrent(value); if (Date.now() - persistAt.current > 1200) { persistAt.current = Date.now(); persistPosition(value); } }} onPlay={() => { setNotice(''); setPlaying(true); }} onPause={(event) => { setPlaying(false); persistPosition(event.currentTarget.currentTime); }} onEnded={() => { setPlaying(false); persistPosition(durationRef.current || duration, true); }} onError={() => { setPlaying(false); setNotice('Не удалось прочитать аудиофайл. Выберите этот файл заново в редактировании книги.'); }} data-testid="audio-player" />}
+      {src && <audio ref={audioRef} src={src} preload="auto" onLoadedMetadata={(event) => { const value = event.currentTarget.duration; if (Number.isFinite(value) && value > 0) { durationRef.current = value; setDuration(value); if (!book.duration) void updateBook(book.id, { duration: value }); } const start = Math.min(Math.max(book.position, 0), Number.isFinite(value) && value > 0 ? value : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; }} onCanPlay={(event) => { if (!restoredPositionRef.current) { const start = Math.min(Math.max(book.position, 0), Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; } }} onTimeUpdate={(event) => { const value = event.currentTarget.currentTime; positionRef.current = value; setCurrent(value); if (Date.now() - persistAt.current > 1200) { persistAt.current = Date.now(); persistPosition(value); } }} onPlay={() => { setNotice(''); setPlaying(true); }} onPause={(event) => { setPlaying(false); persistPosition(event.currentTarget.currentTime); }} onEnded={() => { setPlaying(false); persistPosition(durationRef.current || duration, true); }} onError={() => { setPlaying(false); setNotice('Не удалось прочитать аудиофайл. Выберите этот файл заново в редактировании книги.'); }} data-testid="audio-player" />}
       <div className="mt-14 grid gap-4 border-t border-border pt-7 sm:grid-cols-3"><div className="rounded-2xl bg-panel p-4"><Clock3 className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{formatTime(duration)}</p><p className="mt-1 text-[11px] text-muted-foreground">Полная длительность</p></div><div className="rounded-2xl bg-panel p-4"><SlidersHorizontal className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{Math.round(percentage)}%</p><p className="mt-1 text-[11px] text-muted-foreground">Уже прослушано</p></div><div className="rounded-2xl bg-panel p-4"><Headphones className="size-4 text-primary" /><p className="mt-3 font-mono-ui text-sm">{book.completed ? 'завершено' : 'в процессе'}</p><p className="mt-1 text-[11px] text-muted-foreground">Состояние книги</p></div></div>
     </div>
   );
