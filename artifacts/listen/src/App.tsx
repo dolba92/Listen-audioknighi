@@ -227,17 +227,39 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     try {
       const ID3 = await import('id3js');
       const tags = await ID3.fromFile(file);
-      
-      if (tags.picture) {
-        const picture = tags.picture;
-        const blob = new Blob([picture.data], { type: picture.format });
-        const imageUrl = URL.createObjectURL(blob);
-        setCoverPreview(imageUrl);
-        setCoverFile(new File([blob], 'cover.jpg', { type: picture.format }));
-        console.log('✅ Обложка автоматически загружена из MP3');
-      } else {
-        console.log('ℹ️ В MP3-файле нет встроенной обложки');
-      }
+
+const picture =
+  tags.images?.find((image) => image.type === 'cover-front') ??
+  tags.images?.[0];
+
+if (picture?.data) {
+  const mimeType = picture.mime || 'image/jpeg';
+
+  const blob = new Blob([picture.data], {
+    type: mimeType,
+  });
+
+  const imageUrl = URL.createObjectURL(blob);
+
+  setCoverPreview(imageUrl);
+
+  const extension =
+    mimeType === 'image/png'
+      ? 'png'
+      : mimeType === 'image/webp'
+        ? 'webp'
+        : 'jpg';
+
+  setCoverFile(
+    new File([blob], `cover.${extension}`, {
+      type: mimeType,
+    }),
+  );
+
+  console.log('✅ Обложка автоматически загружена из аудиофайла');
+} else {
+  console.log('ℹ️ Во встроенных тегах нет обложки');
+}
     } catch (error) {
       console.error('⚠️ Не удалось прочитать ID3-теги:', error);
     }
