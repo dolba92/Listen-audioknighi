@@ -224,36 +224,61 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     probe.onerror = () => URL.revokeObjectURL(url);
     probe.src = url;
 
-    try {
-      const ID3 = await import('id3js');
-      const tags = await ID3.fromFile(file);
+        try {
+      const { parseBlob } = await import('music-metadata');
 
-const picture =
-  tags.images?.find((image) => image.type === 'cover-front') ??
-  tags.images?.[0];
+      const metadata = await parseBlob(file, {
+        skipCovers: false,
+      });
 
-if (picture?.data) {
-  const mimeType = picture.mime || 'image/jpeg';
+      console.log('🎵 Метаданные:', metadata);
 
-  const blob = new Blob([picture.data], {
-    type: mimeType,
-  });
+      const pictures = metadata.common.picture ?? [];
+      const picture =
+        pictures.find((item) =>
+          item.type?.toLowerCase().includes('front')
+        ) ?? pictures[0];
 
-  const imageUrl = URL.createObjectURL(blob);
+      if (picture?.data) {
+        const mimeType = picture.format || 'image/jpeg';
 
-  setCoverPreview(imageUrl);
+        const imageBytes = new Uint8Array(picture.data);
 
-  const extension =
-    mimeType === 'image/png'
-      ? 'png'
-      : mimeType === 'image/webp'
-        ? 'webp'
-        : 'jpg';
+        const blob = new Blob([imageBytes], {
+          type: mimeType,
+        });
 
-  setCoverFile(
-    new File([blob], `cover.${extension}`, {
-      type: mimeType,
-    }),
+        const imageUrl = URL.createObjectURL(blob);
+
+        setCoverPreview(imageUrl);
+
+        const extension =
+          mimeType.includes('png')
+            ? 'png'
+            : mimeType.includes('webp')
+              ? 'webp'
+              : 'jpg';
+
+        setCoverFile(
+          new File([blob], `cover.${extension}`, {
+            type: mimeType,
+          }),
+        );
+
+        console.log('✅ Встроенная обложка найдена:', {
+          format: picture.format,
+          type: picture.type,
+          size: picture.data.length,
+        });
+      } else {
+        console.log('ℹ️ Во встроенных метаданных нет обложки');
+      }
+    } catch (error) {
+      console.error(
+        '⚠️ Не удалось прочитать метаданные аудиофайла:',
+        error,
+      );
+    }
   );
 
   console.log('✅ Обложка автоматически загружена из аудиофайла');
