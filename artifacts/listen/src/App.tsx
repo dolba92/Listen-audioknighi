@@ -509,7 +509,7 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
   const navigation = [{ href: '/', label: 'Библиотека', icon: Library }, { href: '/settings', label: 'Настройки', icon: Settings }];
 
   const backgroundStyle = {
-    backgroundImage: "url('/background.png')",
+    backgroundImage: "url('/background.webp')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'
