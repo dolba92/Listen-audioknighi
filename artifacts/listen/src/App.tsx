@@ -117,7 +117,7 @@ function BookMenu({ book, onEdit, onDelete }: { book: Book; onEdit: () => void; 
 
 function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () => void; onEdit: () => void; onDelete: () => void }) {
   return (
-    <article className="group animate-rise w-full max-w-[190px] rounded-[24px] glass p-2.5 pb-3" data-testid={`card-book-${book.id}`}>
+    <article className="group animate-rise w-full max-w-[165px] rounded-[20px] glass p-2 pb-2.5" data-testid={`card-book-${book.id}`}>
       <button onClick={onOpen} className="block w-full text-left" data-testid={`button-open-${book.id}`}>
         <div className="relative">
           <Cover book={book} />
@@ -128,10 +128,10 @@ function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () =
         </div>
       </button>
       <div className="mt-2 flex items-start justify-between gap-2">
-        <button onClick={onOpen} className="min-w-0 text-left" data-testid={`button-title-${book.id}`}><h3 className="truncate text-base font-semibold">{book.title}</h3><p className="mt-1 truncate text-sm text-muted-foreground">{book.author}</p></button>
+        <button onClick={onOpen} className="min-w-0 text-left" data-testid={`button-title-${book.id}`}><h3 className="truncate text-sm font-semibold">{book.title}</h3><p className="mt-0.5 truncate text-xs text-muted-foreground">{book.author}</p></button>
         <BookMenu book={book} onEdit={onEdit} onDelete={onDelete} />
       </div>
-      <div className="mt-2 flex items-center gap-2"><ProgressBar value={book.percentage} className="flex-1" /><span className="text-base font-bold text-foreground/85">{Math.round(book.percentage)}%</span></div>
+      <div className="mt-1.5 flex items-center gap-2"><ProgressBar value={book.percentage} className="flex-1" /><span className="text-sm font-bold text-foreground/85">{Math.round(book.percentage)}%</span></div>
     </article>
   );
 }
@@ -406,7 +406,7 @@ function PlayerPage() {
     <div className="mx-auto max-w-5xl animate-rise">
       <button onClick={() => setLocation('/')} className="mb-8 inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground" data-testid="button-player-back"><ChevronLeft className="size-4" /> Вернуться к библиотеке</button>
       <div className="grid items-center gap-10 md:grid-cols-[minmax(260px,360px)_1fr] md:gap-16">
-        <div className="relative mx-auto w-full max-w-[300px]"><Cover book={book} size="lg" /><div className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-2xl bg-accent text-foreground shadow-lg"><Volume2 className="size-5" /></div></div>
+        <div className="relative mx-auto w-full max-w-[245px]"><Cover book={book} size="lg" /><div className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-2xl bg-accent text-foreground shadow-lg"><Volume2 className="size-5" /></div></div>
         <div
           className="min-w-0 rounded-[28px] border px-7 py-7 md:px-8 md:py-8"
           style={{
