@@ -209,3 +209,29 @@ html[data-theme="lavender"] .nav-active {
   background: rgba(119,98,139,.92) !important;
   border-color: rgba(94,75,113,.95) !important;
 }
+
+/* Home: marked panels use the same transparent glass feel as Settings cards */
+.settings-like-glass {
+  background: rgba(255, 255, 255, .32) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(125%) !important;
+  backdrop-filter: blur(20px) saturate(125%) !important;
+  border-color: rgba(255, 255, 255, .74) !important;
+  box-shadow: 0 12px 34px rgba(25,31,45,.10), inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+
+.dark .settings-like-glass {
+  background: rgba(15,23,42,.72) !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+html[data-theme="sage"] .settings-like-glass {
+  background: rgba(232,239,220,.30) !important;
+}
+
+html[data-theme="warm"] .settings-like-glass {
+  background: rgba(244,226,198,.30) !important;
+}
+
+html[data-theme="lavender"] .settings-like-glass {
+  background: rgba(231,222,240,.29) !important;
+}
