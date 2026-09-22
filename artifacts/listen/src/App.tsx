@@ -93,7 +93,7 @@ function SkeletonHome() {
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
-    <section className="glass mx-auto flex min-h-[260px] w-full max-w-[980px] flex-col items-center justify-center rounded-[30px] px-6 py-12 text-center" data-testid="state-empty-library">
+    <section className="empty-library-glass mx-auto flex min-h-[260px] w-full max-w-[980px] flex-col items-center justify-center rounded-[30px] px-6 py-12 text-center" data-testid="state-empty-library">
       <h2 className="font-display text-3xl font-semibold md:text-4xl">Ваша библиотека ждёт первую историю</h2>
       <p className="mt-3 max-w-xl text-base font-medium text-foreground/70">Здесь будут храниться ваши аудиокниги — всегда под рукой, когда захочется продолжить слушать.</p>
       <button onClick={onAdd} className="listen-green-button mt-7 inline-flex h-12 whitespace-nowrap items-center justify-center gap-2 rounded-full px-7 text-sm font-bold transition-transform hover:-translate-y-0.5" data-testid="button-empty-add"><Plus className="size-4 shrink-0" /><span>Добавить книгу</span></button>
@@ -121,7 +121,7 @@ function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () =
         <div className="relative">
           <Cover book={book} />
           <div className="absolute inset-x-0 bottom-0 p-2.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-            <div className="listen-green-button rounded-xl px-3 py-2.5 text-center text-sm font-semibold">Открыть книгу</div>
+            <div className="listen-green-button whitespace-nowrap rounded-xl px-4 py-2.5 text-center text-sm font-semibold">Открыть книгу</div>
           </div>
           {book.completed && <span className="absolute right-3 top-3 grid size-7 place-items-center rounded-full bg-card text-primary shadow-sm"><Check className="size-4" /></span>}
         </div>
