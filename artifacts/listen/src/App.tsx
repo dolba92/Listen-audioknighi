@@ -459,7 +459,7 @@ function SettingsPage() {
   });
   const [, setLocation] = useLocation();
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.classList.toggle('dark', theme === 'dark' || theme === 'night-lavender');
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('listen-theme', theme);
   }, [theme]);
@@ -479,6 +479,11 @@ function SettingsPage() {
                 ['warm', 'Тёплая'],
                 ['lavender', 'Лаванда'],
                 ['dark', 'Тёмный лес'],
+                ['dusty-rose', 'Пыльная роза'],
+                ['blue-fog', 'Голубой туман'],
+                ['peach', 'Персик'],
+                ['mocha', 'Мокко'],
+                ['night-lavender', 'Ночная лаванда'],
               ].map(([value, label]) => (
                 <button
                   key={value}
