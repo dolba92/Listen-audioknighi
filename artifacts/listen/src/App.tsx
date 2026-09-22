@@ -93,11 +93,15 @@ function SkeletonHome() {
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-dashed border-primary/25 bg-panel px-6 py-16 text-center md:px-20" data-testid="state-empty-library">
-      <span className="mx-auto mb-5 grid size-14 place-items-center rounded-2xl bg-secondary text-primary"><BookOpen className="size-6" /></span>
-      <h2 className="font-display text-4xl font-semibold">Здесь пока пусто</h2>
-      <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">Добавьте аудиокнигу — она останется у вас, даже если вы закроете браузер.</p>
-      <button onClick={onAdd} className="mt-7 inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5" data-testid="button-empty-add"><Plus className="size-4" /> Добавить книгу</button>
+    <section className="flex min-h-[220px] items-center justify-center px-4 py-10" data-testid="state-empty-library">
+      <button
+        onClick={onAdd}
+        className="listen-green-button inline-flex h-12 whitespace-nowrap items-center justify-center gap-2 rounded-full px-7 text-sm font-bold transition-transform hover:-translate-y-0.5"
+        data-testid="button-empty-add"
+      >
+        <Plus className="size-4 shrink-0" />
+        <span>Добавить книгу</span>
+      </button>
     </section>
   );
 }
