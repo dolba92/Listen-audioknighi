@@ -487,49 +487,32 @@ html[data-theme='night-lavender'] .book-action-menu {
 }
 
 
-/* ===== Поиск: зелёный, в цвет кнопок ===== */
+/* ===== Поиск: такой же зелёный, как остальные кнопки ===== */
 .search-glass {
-  background: rgba(104, 128, 82, 0.22) !important;
-  border-color: rgba(82, 105, 62, 0.52) !important;
-  color: rgb(55, 76, 42) !important;
-  -webkit-backdrop-filter: blur(4px) saturate(108%);
-  backdrop-filter: blur(4px) saturate(108%);
+  background: rgba(104, 128, 82, 0.92) !important;
+  color: #fff !important;
+  border: 1px solid rgba(82, 105, 62, 0.95) !important;
+  box-shadow: 0 5px 14px rgba(63, 82, 47, 0.18) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
 
 .search-glass input {
-  color: rgb(55, 76, 42) !important;
-  caret-color: rgb(82, 105, 62) !important;
+  color: #fff !important;
+  caret-color: #fff !important;
 }
 
 .search-glass input::placeholder {
-  color: rgba(55, 76, 42, 0.78) !important;
+  color: rgba(255, 255, 255, 0.92) !important;
   opacity: 1 !important;
 }
 
 .search-glass svg {
-  color: rgb(55, 76, 42) !important;
+  color: #fff !important;
   stroke: currentColor !important;
 }
 
 .search-glass:focus-within {
-  background: rgba(104, 128, 82, 0.30) !important;
-  border-color: rgba(82, 105, 62, 0.72) !important;
-}
-
-/* В тёмных темах поиск остаётся в цвете зелёных кнопок,
-   но текст делаем светлым для читаемости. */
-html[data-theme='dark'] .search-glass,
-html[data-theme='night-lavender'] .search-glass {
-  background: rgba(104, 128, 82, 0.72) !important;
-  border-color: rgba(151, 177, 128, 0.55) !important;
-  color: #fff !important;
-}
-
-html[data-theme='dark'] .search-glass input,
-html[data-theme='dark'] .search-glass input::placeholder,
-html[data-theme='dark'] .search-glass svg,
-html[data-theme='night-lavender'] .search-glass input,
-html[data-theme='night-lavender'] .search-glass input::placeholder,
-html[data-theme='night-lavender'] .search-glass svg {
-  color: rgba(255,255,255,.94) !important;
+  background: rgba(104, 128, 82, 1) !important;
+  border-color: rgba(82, 105, 62, 1) !important;
 }
