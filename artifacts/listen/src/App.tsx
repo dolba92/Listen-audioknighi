@@ -171,18 +171,18 @@ function HomePage({ onAdd }: { onAdd: () => void }) {
   if (error) return <section className="rounded-[28px] bg-panel p-10 text-center" data-testid="state-error"><CircleHelp className="mx-auto size-8 text-destructive" /><h2 className="mt-4 font-display text-3xl font-semibold">Не удалось открыть библиотеку</h2><p className="mt-2 text-sm text-muted-foreground">{error}</p><button onClick={() => void reload()} className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-retry"><RotateCcw className="size-4" /> Повторить</button></section>;
   if (books.length === 0) return <EmptyState onAdd={onAdd} />;
   return (
-    <div className="space-y-12">
-      <header className="relative animate-rise glass-soft rounded-[28px] px-6 py-7 sm:px-8">
+    <div className="home-dashboard">
+      <header className="relative animate-rise glass-soft home-hero rounded-[28px] px-6 py-5 sm:px-8">
         <p className="font-mono-ui text-[10px] font-bold uppercase tracking-[.22em] text-primary/70">Личная аудиотека</p>
         <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <div><h1 className="max-w-2xl font-display text-5xl font-semibold leading-[.92] tracking-[-.04em] sm:text-6xl">Ваше тихое место<br /><em className="font-normal text-primary">для историй.</em></h1><p className="mt-5 max-w-md text-sm leading-6 text-muted-foreground">Книги ждут вас здесь. Никаких рекомендаций — только то, что вы выбрали сами.</p></div>
+          <div><h1 className="max-w-2xl font-display text-4xl font-semibold leading-[.92] tracking-[-.04em] sm:text-5xl">Ваше тихое место<br /><em className="font-normal text-primary">для историй.</em></h1><p className="mt-5 max-w-md text-sm leading-6 text-muted-foreground">Книги ждут вас здесь. Никаких рекомендаций — только то, что вы выбрали сами.</p></div>
           <button onClick={onAdd} className="inline-flex h-12 items-center justify-center gap-2 self-start rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 md:self-end" data-testid="button-add-book"><Plus className="size-4" /> Добавить книгу</button>
         </div>
       </header>
       {inProgress[0] && <ContinueCard book={inProgress[0]} onOpen={() => setLocation(`/player/${inProgress[0].id}`)} />}
-      <section data-testid="section-collection">
+      <section className="library-section" data-testid="section-collection">
         <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><p className="font-mono-ui text-[10px] uppercase tracking-[.18em] text-muted-foreground">Ваша полка</p><h2 className="mt-1 font-display text-4xl font-semibold">Все книги <span className="font-sans text-base font-medium text-muted-foreground">/ {books.length}</span></h2></div><label className="flex h-11 w-full items-center gap-2 rounded-full glass-strong px-4 text-sm text-foreground sm:w-60"><Search className="size-4" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти книгу" className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground/70" data-testid="input-search" /></label></div>
-        {filtered.length > 0 ? <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{filtered.map((book) => <BookCard key={book.id} book={book} onOpen={() => setLocation(`/player/${book.id}`)} onEdit={() => setEditing(book)} onDelete={() => void confirmDelete(book)} />)}</div> : <div className="rounded-2xl glass px-6 py-10 text-center text-sm text-muted-foreground" data-testid="state-search-empty">По вашему запросу ничего не найдено.</div>}
+        {filtered.length > 0 ? <div className="library-grid grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{filtered.map((book) => <BookCard key={book.id} book={book} onOpen={() => setLocation(`/player/${book.id}`)} onEdit={() => setEditing(book)} onDelete={() => void confirmDelete(book)} />)}</div> : <div className="rounded-2xl glass px-6 py-10 text-center text-sm text-muted-foreground" data-testid="state-search-empty">По вашему запросу ничего не найдено.</div>}
       </section>
       {completed.length > 0 && <section data-testid="section-completed"><div className="mb-5 flex items-end justify-between"><div><p className="font-mono-ui text-[10px] uppercase tracking-[.18em] text-muted-foreground">Сохранено в памяти</p><h2 className="mt-1 font-display text-4xl font-semibold">Завершённые</h2></div><span className="hidden items-center gap-1.5 text-xs text-primary sm:flex"><Check className="size-4" /> Всё прослушано</span></div><div className="grid grid-cols-2 gap-4 sm:grid-cols-4">{completed.map((book) => <BookCard key={book.id} book={book} onOpen={() => setLocation(`/player/${book.id}`)} onEdit={() => setEditing(book)} onDelete={() => void confirmDelete(book)} />)}</div></section>}
       {editing && <BookFormModal book={editing} onClose={() => setEditing(null)} />}
@@ -463,7 +463,7 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
   };
 
   return (
-    <div className="listen-grain min-h-[100dvh]" style={backgroundStyle}>
+    <div className="listen-grain app-shell min-h-[100dvh]" style={backgroundStyle}>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col glass-sidebar px-5 py-7 md:flex">
         <Logo />
         <p className="mt-14 px-4 font-mono-ui text-[16px] uppercase tracking-[.2em] text-muted-foreground">Навигация</p>
@@ -473,7 +473,7 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
 
       <header className="sticky top-0 z-20 flex h-[74px] items-center justify-between glass-sidebar px-5 md:hidden"><button onClick={() => setMobileOpen(!mobileOpen)} className="grid size-14 place-items-center rounded-full hover:bg-secondary" aria-label="Открыть меню" data-testid="button-mobile-menu"><Menu className="size-10" /></button><Logo /><button onClick={onAdd} className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground" aria-label="Добавить книгу" data-testid="button-mobile-add"><Plus className="size-5" /></button></header>
       {mobileOpen && <div className="fixed inset-x-0 top-[74px] z-20 glass-strong p-4 shadow-md md:hidden animate-fade"><nav className="space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold ${location === href ? 'bg-sidebar-accent' : ''}`} data-testid={`link-mobile-nav-${label}`}><Icon className="size-4" /> {label}</Link>)}</nav></div>}
-      <main className="px-5 pb-16 pt-10 md:ml-[248px] md:px-10 md:py-14 lg:px-16"><div className="mx-auto max-w-[1240px]">{children}</div></main>
+      <main className="app-main px-5 pb-10 pt-7 md:ml-[248px] md:px-8 md:py-7 lg:px-10"><div className="mx-auto max-w-[1240px]">{children}</div></main>
     </div>
   );
 }
