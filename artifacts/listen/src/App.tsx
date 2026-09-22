@@ -119,7 +119,7 @@ function BookMenu({ book, onEdit, onDelete }: { book: Book; onEdit: () => void; 
 
 function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () => void; onEdit: () => void; onDelete: () => void }) {
   return (
-    <article className="group animate-rise rounded-[24px] glass p-3" data-testid={`card-book-${book.id}`}>
+    <article className="group animate-rise rounded-[24px] glass p-3 pb-5" data-testid={`card-book-${book.id}`}>
       <button onClick={onOpen} className="block w-full text-left" data-testid={`button-open-${book.id}`}>
         <div className="relative">
           <Cover book={book} />
@@ -130,10 +130,10 @@ function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () =
         </div>
       </button>
       <div className="mt-3 flex items-start justify-between gap-2">
-        <button onClick={onOpen} className="min-w-0 text-left" data-testid={`button-title-${book.id}`}><h3 className="truncate text-sm font-semibold">{book.title}</h3><p className="mt-1 truncate text-xs text-muted-foreground">{book.author}</p></button>
+        <button onClick={onOpen} className="min-w-0 text-left" data-testid={`button-title-${book.id}`}><h3 className="truncate text-base font-semibold">{book.title}</h3><p className="mt-1 truncate text-sm text-muted-foreground">{book.author}</p></button>
         <BookMenu book={book} onEdit={onEdit} onDelete={onDelete} />
       </div>
-      <div className="mt-3 flex items-center gap-2"><ProgressBar value={book.percentage} className="flex-1" /><span className="font-mono-ui text-[10px] text-muted-foreground">{Math.round(book.percentage)}%</span></div>
+      <div className="mt-3 flex items-center gap-2"><ProgressBar value={book.percentage} className="flex-1" /><span className="font-mono-ui text-sm font-semibold text-foreground/75">{Math.round(book.percentage)}%</span></div>
     </article>
   );
 }
@@ -175,7 +175,7 @@ function HomePage({ onAdd }: { onAdd: () => void }) {
       <header className="relative animate-rise rounded-[26px] glass px-5 py-4 md:px-6 md:py-5">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div><h1 className="font-display text-4xl font-semibold leading-none tracking-[-.04em] sm:text-5xl">Моя библиотека</h1></div>
-          <button onClick={onAdd} className="inline-flex h-11 items-center justify-center gap-2 self-start rounded-full glass-strong px-5 text-sm font-semibold text-foreground transition-transform hover:-translate-y-0.5 md:self-auto" data-testid="button-add-book"><Plus className="size-4" /> Добавить книгу</button>
+          <button onClick={onAdd} className="inline-flex h-11 items-center justify-center gap-2 self-start rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5 md:self-auto" data-testid="button-add-book"><Plus className="size-4" /> Добавить книгу</button>
         </div>
       </header>
       {inProgress[0] && <ContinueCard book={inProgress[0]} onOpen={() => setLocation(`/player/${inProgress[0].id}`)} />}
@@ -436,17 +436,16 @@ function SettingsPage() {
   return (
     <div className="mx-auto max-w-3xl animate-rise"><p className="font-mono-ui text-[10px] uppercase tracking-[.22em] text-primary/70">Настройки</p><h1 className="mt-3 font-display text-6xl font-semibold tracking-[-.04em]">Тихие предпочтения.</h1><p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">Настройте Listen так, чтобы возвращаться к книгам было естественно.</p>
       <div className="mt-10 space-y-4">
-        <SettingGroup title="Внешний вид" icon={<Leaf className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-sm font-semibold">Тема интерфейса</h2><p className="mt-1 text-xs text-muted-foreground">Светлая палитра сохраняет ощущение дня.</p></div><div className="flex rounded-full bg-secondary p-1"><button onClick={() => setTheme('light')} className={`rounded-full px-3 py-2 text-xs font-semibold ${theme === 'light' ? 'bg-card shadow-sm' : 'text-muted-foreground'}`} data-testid="button-theme-light">Светлая</button><button onClick={() => setTheme('dark')} className={`rounded-full px-3 py-2 text-xs font-semibold ${theme === 'dark' ? 'bg-card shadow-sm' : 'text-muted-foreground'}`} data-testid="button-theme-dark"><Moon className="mr-1 inline size-3.5" /> Тёмный лес</button></div></div></SettingGroup>
-        <SettingGroup title="Воспроизведение" icon={<Headphones className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-sm font-semibold">Скорость по умолчанию</h2><p className="mt-1 text-xs text-muted-foreground">Можно изменить в плеере в любой момент.</p></div><select value={defaultSpeed} onChange={(event) => selectSpeed(Number(event.target.value))} className="h-10 rounded-full border border-input bg-background px-3 text-xs font-semibold outline-none" data-testid="select-default-speed">{SPEEDS.map((value) => <option key={value} value={value}>{value.toFixed(2)}×</option>)}</select></div></SettingGroup>
-        <SettingGroup title="Управление библиотекой" icon={<Library className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-sm font-semibold">Книг в библиотеке</h2><p className="mt-1 text-xs text-muted-foreground">Аудио и обложки хранятся только в этом браузере.</p></div><span className="font-mono-ui text-sm text-primary">{books.length}</span></div><div className="mt-5 border-t border-border pt-5"><button onClick={() => void clear()} className="inline-flex items-center gap-2 text-xs font-semibold text-destructive transition-colors hover:text-destructive/70" data-testid="button-clear-library"><Trash2 className="size-4" /> Очистить всю библиотеку</button></div></SettingGroup>
-        <SettingGroup title="О Listen" icon={<Sparkles className="size-10" />}><p className="text-sm leading-6 text-muted-foreground">Listen — личная полка для аудиокниг без шума и случайных рекомендаций. Ваши файлы не покидают устройство.</p><div className="mt-5 flex items-center gap-2 text-[10px] text-muted-foreground"><span className="size-1.5 rounded-full bg-primary" /> Версия 1.0 <span className="mx-1 opacity-40">•</span> Сделано для долгих историй</div></SettingGroup>
+        <SettingGroup title="Внешний вид" icon={<Leaf className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-base font-semibold">Тема интерфейса</h2><p className="mt-1 text-sm text-muted-foreground">Светлая палитра сохраняет ощущение дня.</p></div><div className="flex rounded-full bg-secondary p-1"><button onClick={() => setTheme('light')} className={`rounded-full px-4 py-2 text-sm font-semibold ${theme === 'light' ? 'bg-card shadow-sm' : 'text-muted-foreground'}`} data-testid="button-theme-light">Светлая</button><button onClick={() => setTheme('dark')} className={`rounded-full px-4 py-2 text-sm font-semibold ${theme === 'dark' ? 'bg-card shadow-sm' : 'text-muted-foreground'}`} data-testid="button-theme-dark"><Moon className="mr-1 inline size-3.5" /> Тёмный лес</button></div></div></SettingGroup>
+        <SettingGroup title="Воспроизведение" icon={<Headphones className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-base font-semibold">Скорость по умолчанию</h2><p className="mt-1 text-sm text-muted-foreground">Можно изменить в плеере в любой момент.</p></div><select value={defaultSpeed} onChange={(event) => selectSpeed(Number(event.target.value))} className="h-11 rounded-full border border-input bg-background px-4 text-sm font-semibold outline-none" data-testid="select-default-speed">{SPEEDS.map((value) => <option key={value} value={value}>{value.toFixed(2)}×</option>)}</select></div></SettingGroup>
+        <SettingGroup title="Управление библиотекой" icon={<Library className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-base font-semibold">Книг в библиотеке</h2><p className="mt-1 text-sm text-muted-foreground">Аудио и обложки хранятся только в этом браузере.</p></div><span className="font-mono-ui text-base font-semibold text-primary">{books.length}</span></div><div className="mt-5 border-t border-border pt-5"><button onClick={() => void clear()} className="inline-flex items-center gap-2 text-sm font-semibold text-destructive transition-colors hover:text-destructive/70" data-testid="button-clear-library"><Trash2 className="size-4" /> Очистить всю библиотеку</button></div></SettingGroup>
       </div>
     </div>
   );
 }
 
 function SettingGroup({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
-  return <section className="rounded-[24px] border border-card-border bg-panel p-5 sm:p-6" data-testid={`setting-${title}`}><div className="mb-5 flex items-center gap-2 text-primary"><span className="grid size-8 place-items-center rounded-lg bg-secondary">{icon}</span><span className="font-mono-ui text-[10px] font-bold uppercase tracking-[.15em]">{title}</span></div>{children}</section>;
+  return <section className="rounded-[24px] border border-card-border bg-panel p-5 sm:p-6" data-testid={`setting-${title}`}><div className="mb-5 flex items-center gap-2 text-primary"><span className="grid size-8 place-items-center rounded-lg bg-secondary">{icon}</span><span className="font-mono-ui text-xs font-bold uppercase tracking-[.15em]">{title}</span></div>{children}</section>;
 }
 
 function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void }) {
