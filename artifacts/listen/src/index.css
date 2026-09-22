@@ -204,3 +204,79 @@ body {
     backdrop-filter: blur(20px) saturate(110%);
   }
 }
+
+
+/* ===== Компактная главная: без прокрутки всего экрана на компьютере ===== */
+@media (min-width: 768px) {
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  .app-shell {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background-attachment: fixed;
+  }
+
+  .app-main {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .home-dashboard {
+    height: calc(100dvh - 56px);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-height: 0;
+  }
+
+  .home-hero {
+    flex: 0 0 auto;
+  }
+
+  .home-hero p.mt-5 {
+    margin-top: 12px;
+  }
+
+  .library-section {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .library-section > .mb-5 {
+    margin-bottom: 12px;
+    flex: 0 0 auto;
+  }
+
+  .library-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 2px 6px 8px 2px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(76, 91, 61, .28) transparent;
+  }
+
+  .library-grid::-webkit-scrollbar { width: 6px; }
+  .library-grid::-webkit-scrollbar-track { background: transparent; }
+  .library-grid::-webkit-scrollbar-thumb {
+    background: rgba(76, 91, 61, .25);
+    border-radius: 999px;
+  }
+}
+
+/* На телефоне оставляем обычную вертикальную прокрутку. */
+@media (max-width: 767px) {
+  body { overflow-y: auto; }
+  .app-shell, .app-main, .home-dashboard { height: auto; overflow: visible; }
+  .home-dashboard { display: block; }
+  .home-dashboard > * + * { margin-top: 28px; }
+}
