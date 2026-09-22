@@ -508,15 +508,8 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigation = [{ href: '/', label: 'Библиотека', icon: Library }, { href: '/settings', label: 'Настройки', icon: Settings }];
 
-  const backgroundStyle = {
-    backgroundImage: "url('/background.png')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
-  };
-
   return (
-    <div className="listen-grain min-h-[100dvh]" style={backgroundStyle}>
+    <div className="listen-grain min-h-[100dvh]">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border glass px-5 py-7 md:flex">
         <Logo />
         <p className="mt-10 px-4 text-[20px] font-bold tracking-[-.01em] text-foreground/85">Навигация</p>
