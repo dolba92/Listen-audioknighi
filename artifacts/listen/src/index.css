@@ -2,201 +2,205 @@
 @import "tailwindcss";
 
 :root {
-  --background: 30 33% 96%;
-  --foreground: 240 10% 3.9%;
-  --card: 30 33% 98%;
-  --card-foreground: 240 10% 3.9%;
-  --card-border: 30 20% 90%;
-  --primary: 142 71% 45%;
-  --primary-foreground: 355 100% 100%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 142 60% 50%;
-  --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
+  --background: 84 24% 95%;
+  --foreground: 90 14% 12%;
+  --card: 72 28% 98%;
+  --card-foreground: 90 14% 12%;
+  --card-border: 75 22% 86%;
+  --primary: 91 27% 34%;
+  --primary-foreground: 60 33% 98%;
+  --secondary: 76 24% 91%;
+  --secondary-foreground: 90 15% 17%;
+  --muted: 76 20% 91%;
+  --muted-foreground: 82 10% 34%;
+  --accent: 88 28% 68%;
+  --accent-foreground: 90 15% 16%;
+  --destructive: 0 72% 50%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 142 71% 45%;
+  --border: 76 18% 80%;
+  --input: 76 18% 80%;
+  --ring: 91 27% 34%;
   --radius: 0.5rem;
-  --sidebar: 30 33% 96%;
-  --sidebar-accent: 240 4.8% 95.9%;
-  --sidebar-accent-foreground: 240 5.9% 10%;
-  --sidebar-border: 240 5.9% 90%;
+  --sidebar: 76 28% 96%;
+  --sidebar-accent: 82 25% 88%;
+  --sidebar-accent-foreground: 90 16% 16%;
+  --sidebar-border: 76 18% 82%;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --card-border: 240 3.7% 15.9%;
-  --primary: 142 71% 45%;
-  --primary-foreground: 355 100% 100%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 142 60% 50%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
+  --background: 90 13% 9%;
+  --foreground: 70 24% 95%;
+  --card: 90 12% 12%;
+  --card-foreground: 70 24% 95%;
+  --card-border: 85 10% 24%;
+  --primary: 88 30% 65%;
+  --primary-foreground: 90 16% 12%;
+  --secondary: 88 10% 18%;
+  --secondary-foreground: 70 24% 95%;
+  --muted: 88 10% 18%;
+  --muted-foreground: 80 12% 70%;
+  --accent: 88 24% 58%;
+  --accent-foreground: 90 16% 12%;
+  --destructive: 0 58% 42%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 142 71% 45%;
-  --sidebar: 240 5.9% 10%;
-  --sidebar-accent: 240 3.7% 15.9%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-border: 240 3.7% 15.9%;
+  --border: 88 10% 25%;
+  --input: 88 10% 25%;
+  --ring: 88 30% 65%;
+  --sidebar: 90 12% 11%;
+  --sidebar-accent: 88 10% 18%;
+  --sidebar-accent-foreground: 70 24% 95%;
+  --sidebar-border: 88 10% 24%;
 }
 
+html { min-height: 100%; }
 body {
+  min-height: 100%;
+  margin: 0;
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  /* ОСНОВНОЙ ШРИФТ: Inter (для всего текста, кнопок, меню) */
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;
-  letter-spacing: -0.01em; /* Делает текст чуть плотнее и элегантнее */
+  letter-spacing: -0.01em;
 }
 
-/* ЗАГОЛОВКИ И ЛОГОТИП: Playfair Display (элегантный серифный) */
-.font-display {
-  font-family: 'Playfair Display', Georgia, serif !important;
-  letter-spacing: -0.02em;
-}
+.font-display { font-family: 'Playfair Display', Georgia, serif !important; letter-spacing: -0.02em; }
+.font-mono-ui { font-family: 'JetBrains Mono', 'Courier New', monospace; letter-spacing: 0.05em; }
 
-/* МОНОШИРИННЫЙ ШРИФТ (для мелких технических надписей и таймкодов) */
-.font-mono-ui {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  letter-spacing: 0.05em;
-}
+.animate-rise { animation: rise 0.5s ease-out both; }
+.animate-fade { animation: fade 0.3s ease-out both; }
+.animate-pulse-soft { animation: pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
-/* Анимации */
-.animate-rise {
-  animation: rise 0.5s ease-out both;
-}
-.animate-fade {
-  animation: fade 0.3s ease-out both;
-}
-.animate-pulse-soft {
-  animation: pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Зерно/текстура */
-.listen-grain {
-  position: relative;
-}
+.listen-grain { position: relative; background-attachment: fixed; }
 .listen-grain::before {
   content: '';
-  position: absolute;
+  position: fixed;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.03;
+  opacity: 0.018;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
+.listen-grain > * { position: relative; z-index: 1; }
 
-/* Глубокие тени */
-.deep-shadow {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-}
-
-/* Эффект матового стекла */
-.glass {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-.glass-strong {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+/* Единое матовое стекло: фон виден, но текст не теряется. */
+.glass,
+.bg-panel,
+.glass-soft,
+.glass-card {
+  background: linear-gradient(135deg, rgba(255,255,255,.70), rgba(246,249,239,.60));
+  -webkit-backdrop-filter: blur(22px) saturate(115%);
+  backdrop-filter: blur(22px) saturate(115%);
+  border: 1px solid rgba(255,255,255,.72);
+  box-shadow: 0 12px 34px rgba(47,58,36,.10), inset 0 1px 0 rgba(255,255,255,.72);
 }
 
-.dark .glass {
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.glass-strong,
+.glass-modal {
+  background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(246,249,239,.80));
+  -webkit-backdrop-filter: blur(30px) saturate(120%);
+  backdrop-filter: blur(30px) saturate(120%);
+  border: 1px solid rgba(255,255,255,.86);
+  box-shadow: 0 22px 60px rgba(43,52,34,.16), inset 0 1px 0 rgba(255,255,255,.92);
 }
 
-.dark .glass-strong {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.glass-sidebar {
+  background: linear-gradient(180deg, rgba(250,252,245,.82), rgba(239,245,229,.74));
+  -webkit-backdrop-filter: blur(28px) saturate(115%);
+  backdrop-filter: blur(28px) saturate(115%);
+  border-right: 1px solid rgba(255,255,255,.78);
+  box-shadow: 10px 0 34px rgba(48,58,38,.09), inset -1px 0 0 rgba(255,255,255,.48);
 }
 
-/* Обычный фон для карточек */
-.bg-panel {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+.glass-card {
+  border-radius: 24px;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255,255,255,.80), rgba(246,249,239,.69));
+  box-shadow: 0 18px 42px rgba(47,58,36,.14), inset 0 1px 0 rgba(255,255,255,.8);
 }
 
-.dark .bg-panel {
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.glass-button {
+  background: rgba(255,255,255,.76);
+  border: 1px solid rgba(255,255,255,.78);
+  box-shadow: 0 8px 22px rgba(47,58,36,.10);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
 }
 
-/* Обложки и тона */
-.cover-art {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  color: white;
-}
-.cover-sage { background: linear-gradient(135deg, #86efac, #22c55e); }
-.cover-clay { background: linear-gradient(135deg, #fdba74, #f97316); }
-.cover-ochre { background: linear-gradient(135deg, #fde047, #eab308); }
-.cover-ink { background: linear-gradient(135deg, #a5b4fc, #6366f1); }
-.cover-moss { background: linear-gradient(135deg, #a3e635, #65a30d); }
-
-.tone-dot {
-  width: 28px;
-  height: 28px;
-  border-radius: 9999px;
-  cursor: pointer;
-}
-.tone-sage { background: #86efac; }
-.tone-clay { background: #fdba74; }
-.tone-ochre { background: #fde047; }
-.tone-ink { background: #a5b4fc; }
-.tone-moss { background: #a3e635; }
-
-/* Слайдер */
-.range-reset {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  height: 6px;
-}
-.range-reset::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: hsl(var(--primary));
-  cursor: pointer;
-  margin-top: -5px;
-}
-.range-reset::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: 9999px;
-  background: hsl(var(--secondary));
+/* Инпуты внутри стекла тоже матовые, а не белые непрозрачные прямоугольники. */
+.glass-modal input:not([type='range']),
+.glass-modal textarea,
+.glass-modal select,
+.bg-panel input:not([type='range']),
+.bg-panel textarea,
+.bg-panel select {
+  background: rgba(255,255,255,.58) !important;
+  border-color: rgba(74,91,58,.20) !important;
+  color: hsl(var(--foreground));
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Важные вторичные поверхности — чуть плотнее для читаемости. */
+.bg-secondary\/40,
+.bg-secondary\/55 {
+  background-color: rgba(239,244,230,.68) !important;
 }
-@keyframes fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+
+.text-muted-foreground { color: hsl(82 11% 29%); }
+.placeholder\:text-muted-foreground\/70::placeholder { color: hsl(82 9% 39%); opacity: .9; }
+
+.deep-shadow { box-shadow: 0 22px 55px rgba(44,54,34,.15); }
+
+.dark .glass,
+.dark .bg-panel,
+.dark .glass-soft,
+.dark .glass-card {
+  background: linear-gradient(135deg, rgba(28,34,24,.76), rgba(18,24,17,.68));
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 14px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
 }
-@keyframes pulseSoft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+.dark .glass-strong,
+.dark .glass-modal {
+  background: linear-gradient(135deg, rgba(28,34,24,.91), rgba(18,24,17,.86));
+  border-color: rgba(255,255,255,.14);
+}
+.dark .glass-sidebar {
+  background: linear-gradient(180deg, rgba(24,30,21,.88), rgba(17,22,16,.82));
+  border-right-color: rgba(255,255,255,.10);
+}
+.dark .glass-button { background: rgba(34,42,29,.78); border-color: rgba(255,255,255,.12); }
+.dark .text-muted-foreground { color: hsl(80 12% 73%); }
+
+.cover-art { display: flex; flex-direction: column; justify-content: flex-end; color: white; }
+.cover-sage { background: linear-gradient(135deg, #86a979, #52704b); }
+.cover-clay { background: linear-gradient(135deg, #d9ad89, #a96e48); }
+.cover-ochre { background: linear-gradient(135deg, #dbc980, #a79046); }
+.cover-ink { background: linear-gradient(135deg, #9da8b6, #5f6977); }
+.cover-moss { background: linear-gradient(135deg, #9cad72, #667547); }
+
+.tone-dot { width: 28px; height: 28px; border-radius: 9999px; cursor: pointer; }
+.tone-sage { background: #86a979; }
+.tone-clay { background: #d9ad89; }
+.tone-ochre { background: #dbc980; }
+.tone-ink { background: #9da8b6; }
+.tone-moss { background: #9cad72; }
+
+.range-reset { -webkit-appearance: none; appearance: none; background: transparent; height: 6px; }
+.range-reset::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; height: 16px; width: 16px; border-radius: 50%; background: hsl(var(--primary)); cursor: pointer; margin-top: -5px; }
+.range-reset::-webkit-slider-runnable-track { height: 6px; border-radius: 9999px; background: rgba(255,255,255,.70); box-shadow: inset 0 0 0 1px rgba(65,82,50,.10); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulseSoft { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+@media (max-width: 767px) {
+  .listen-grain { background-position: 70% center !important; }
+  .glass-card { border-radius: 20px; padding: 10px; }
+  .glass-sidebar, .glass-strong, .glass-modal, .glass, .bg-panel, .glass-soft {
+    -webkit-backdrop-filter: blur(20px) saturate(110%);
+    backdrop-filter: blur(20px) saturate(110%);
+  }
 }
