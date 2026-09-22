@@ -44,7 +44,7 @@ function Logo() {
       <img
         src="/logo.png"
         alt="Listen"
-        className="h-[104px] w-[104px] object-contain"
+        className="h-[104px] w-[104px] rounded-[24px] object-contain"
       />
     </Link>
   );
@@ -144,7 +144,7 @@ function ContinueCard({ book, onOpen }: { book: Book; onOpen: () => void }) {
         <Cover book={book} size="sm" />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-sm font-bold opacity-80"><Headphones className="size-4" /> Продолжить слушать</div>
-          <h2 className="mt-3 truncate font-display text-3xl font-semibold leading-none md:text-4xl">{book.title}</h2>
+          <h2 className="mt-3 truncate font-display text-3xl font-semibold leading-none md:text-3xl">{book.title}</h2>
           <p className="mt-2 text-sm opacity-70">{book.author} <span className="mx-1 opacity-50">•</span> осталось {formatTime(Math.max(book.duration - book.position, 0))}</p>
           <div className="mt-5 flex items-center gap-3"><ProgressBar value={book.percentage} className="max-w-[260px] flex-1 bg-foreground/10 [&>div]:bg-primary" /><span className="text-base font-bold opacity-85">{Math.round(book.percentage)}%</span></div>
         </div>
@@ -172,7 +172,7 @@ function HomePage({ onAdd }: { onAdd: () => void }) {
     <div className="space-y-6 md:space-y-7">
       <header className="relative animate-rise rounded-[26px] glass px-5 py-4 md:px-6 md:py-5">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div><h1 className="font-display text-4xl font-semibold leading-none tracking-[-.04em] sm:text-5xl">Моя библиотека</h1></div>
+          <div><h1 className="font-display text-4xl font-semibold leading-none tracking-[-.04em] sm:text-4xl">Моя библиотека</h1></div>
           <button onClick={onAdd} className="listen-green-button inline-flex h-11 items-center justify-center gap-2 self-start rounded-full px-5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5 md:self-auto" data-testid="button-add-book"><Plus className="size-4" /> Добавить книгу</button>
         </div>
       </header>
@@ -407,7 +407,7 @@ function PlayerPage() {
     <div className="mx-auto max-w-5xl animate-rise">
       <button onClick={() => setLocation('/')} className="mb-8 inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground" data-testid="button-player-back"><ChevronLeft className="size-4" /> Вернуться к библиотеке</button>
       <div className="grid items-center gap-10 md:grid-cols-[minmax(260px,360px)_1fr] md:gap-16">
-        <div className="relative mx-auto w-full max-w-[360px]"><Cover book={book} size="lg" /><div className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-2xl bg-accent text-foreground shadow-lg"><Volume2 className="size-5" /></div></div>
+        <div className="relative mx-auto w-full max-w-[300px]"><Cover book={book} size="lg" /><div className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-2xl bg-accent text-foreground shadow-lg"><Volume2 className="size-5" /></div></div>
         <div
           className="min-w-0 rounded-[28px] border px-7 py-7 md:px-8 md:py-8"
           style={{
@@ -417,9 +417,9 @@ function PlayerPage() {
             backdropFilter: 'blur(18px) saturate(125%)',
             boxShadow: '0 14px 40px rgba(48, 58, 37, 0.14)'
           }}
-        ><p className="text-sm font-bold text-foreground/80">Сейчас слушаете</p><h1 className="mt-3 font-display text-5xl font-semibold leading-[.9] tracking-[-.04em] sm:text-6xl">{book.title}</h1><p className="mt-4 text-lg text-muted-foreground">{book.author}</p>{book.narrator && <p className="mt-1 text-xs text-muted-foreground/75">Читает {book.narrator}</p>}{book.description && <p className="mt-7 max-w-md text-sm leading-6 text-muted-foreground">{book.description}</p>}
-          <div className="mt-10"><input type="range" min="0" max={duration || 1} step="0.1" value={Math.min(current, duration || 1)} onChange={(event) => seek(Number(event.target.value))} className="range-reset w-full cursor-pointer" aria-label="Позиция воспроизведения" disabled={!src} data-testid="input-player-timeline" /><div className="mt-3 flex justify-between text-sm font-bold text-foreground/80"><span>{formatTime(current)}</span><span>{formatTime(duration)}</span></div></div>
-          <div className="mt-7 flex items-center justify-between gap-2"><button onClick={changeSpeed} className="flex h-10 items-center gap-2 rounded-full border border-border px-3 text-xs font-semibold transition-colors hover:bg-secondary" data-testid="button-player-speed"><Zap className="size-3.5 text-accent-foreground" /> {speed.toFixed(2)}×</button><div className="flex items-center gap-3"><button onClick={() => skip(-15)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Назад 15 секунд" data-testid="button-skip-back"><SkipBack className="size-5" /></button><button onClick={() => void toggle()} className="grid size-16 place-items-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform hover:scale-105" aria-label={playing ? 'Пауза' : 'Воспроизвести'} data-testid="button-player-toggle">{playing ? <Pause className="size-6 fill-current" /> : <Play className="ml-1 size-6 fill-current" />}</button><button onClick={() => skip(30)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Вперёд 30 секунд" data-testid="button-skip-forward"><SkipForward className="size-5" /></button></div><span className="player-status-badge min-w-[92px] text-center text-sm font-bold">{src ? 'Готово' : 'Нет файла'}</span></div>
+        ><p className="text-lg font-extrabold text-foreground">Сейчас слушаете</p><h1 className="mt-3 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] sm:text-5xl">{book.title}</h1><p className="mt-4 text-lg text-muted-foreground">{book.author}</p>{book.narrator && <p className="mt-1 text-xs text-muted-foreground/75">Читает {book.narrator}</p>}{book.description && <p className="mt-7 max-w-md text-sm leading-6 text-muted-foreground">{book.description}</p>}
+          <div className="mt-10"><input type="range" min="0" max={duration || 1} step="0.1" value={Math.min(current, duration || 1)} onChange={(event) => seek(Number(event.target.value))} className="range-reset w-full cursor-pointer" style={{ background: `linear-gradient(to right, rgba(104, 128, 82, 0.98) 0%, rgba(104, 128, 82, 0.98) ${Math.min(100, Math.max(0, percentage))}%, rgba(255,255,255,0.92) ${Math.min(100, Math.max(0, percentage))}%, rgba(255,255,255,0.92) 100%)` }} aria-label="Позиция воспроизведения" disabled={!src} data-testid="input-player-timeline" /><div className="mt-3 flex justify-between text-sm font-bold text-foreground/80"><span>{formatTime(current)}</span><span>{formatTime(duration)}</span></div></div>
+          <div className="mt-7 flex items-center justify-between gap-2"><button onClick={changeSpeed} className="listen-green-button flex h-10 items-center gap-2 rounded-full px-3 text-xs font-semibold transition-transform hover:-translate-y-0.5" data-testid="button-player-speed"><Zap className="size-3.5 text-accent-foreground" /> {speed.toFixed(2)}×</button><div className="flex items-center gap-3"><button onClick={() => skip(-15)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Назад 15 секунд" data-testid="button-skip-back"><SkipBack className="size-5" /></button><button onClick={() => void toggle()} className="listen-green-button grid size-16 place-items-center rounded-full shadow-md transition-transform hover:scale-105" aria-label={playing ? 'Пауза' : 'Воспроизвести'} data-testid="button-player-toggle">{playing ? <Pause className="size-6 fill-current" /> : <Play className="ml-1 size-6 fill-current" />}</button><button onClick={() => skip(30)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Вперёд 30 секунд" data-testid="button-skip-forward"><SkipForward className="size-5" /></button></div><span className="listen-green-button min-w-[92px] rounded-full px-4 py-2.5 text-center text-sm font-bold">{src ? 'Готово' : 'Нет файла'}</span></div>
           {notice && <button onClick={() => setNotice('')} className="mt-5 flex w-full items-center justify-between rounded-xl bg-accent/20 px-4 py-3 text-left text-xs text-foreground" data-testid="status-player-notice"><span>{notice}</span><X className="size-4" /></button>}
         </div>
       </div>
