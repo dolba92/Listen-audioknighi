@@ -38,10 +38,28 @@
   --sidebar: 240 5.9% 10%; --sidebar-accent: 240 3.7% 15.9%;
   --sidebar-accent-foreground: 0 0% 98%; --sidebar-border: 240 3.7% 15.9%;
 }
+html {
+  min-height: 100%;
+  background-color: hsl(var(--background));
+  background-image: url('/background.png');
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 body {
-  background-color: hsl(var(--background)); color: hsl(var(--foreground));
+  min-height: 100dvh;
+  margin: 0;
+  background: transparent;
+  color: hsl(var(--foreground));
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-feature-settings: "rlig" 1, "calt" 1; letter-spacing: -0.01em;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  letter-spacing: -0.01em;
+}
+
+#root {
+  min-height: 100dvh;
+  background: transparent;
 }
 .font-display { font-family: 'Playfair Display', Georgia, serif !important; letter-spacing: -0.02em; }
 .font-mono-ui { font-family: 'Inter', system-ui, -apple-system, sans-serif !important; letter-spacing: 0 !important; }
