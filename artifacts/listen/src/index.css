@@ -114,3 +114,80 @@ body {
   background: rgba(15, 23, 42, 0.34);
   border-color: rgba(255,255,255,.13);
 }
+
+
+/* Player timeline — softer unplayed section, matching library progress */
+.range-reset::-webkit-slider-runnable-track {
+  background: rgba(255,255,255,.62);
+}
+.range-reset::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,.62);
+}
+
+/* Book three-dot menu — sage green glass */
+.book-action-menu {
+  background: rgba(104,128,82,.90);
+  color: #fff;
+  border: 1px solid rgba(82,105,62,.95);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 12px 30px rgba(48,65,36,.24);
+}
+.book-action-item {
+  color: #fff !important;
+  transition: background .18s ease;
+}
+.book-action-item:hover {
+  background: rgba(255,255,255,.16) !important;
+}
+.book-action-delete {
+  color: #fff !important;
+}
+
+/* Extra interface themes */
+html[data-theme="sage"] {
+  --primary: 95 27% 43%;
+  --ring: 95 27% 43%;
+  --accent: 95 28% 52%;
+}
+html[data-theme="sage"] .glass,
+html[data-theme="sage"] .glass-strong,
+html[data-theme="sage"] .bg-panel {
+  background-color: rgba(232,239,220,.30);
+}
+html[data-theme="warm"] {
+  --primary: 31 32% 46%;
+  --ring: 31 32% 46%;
+  --accent: 35 42% 57%;
+}
+html[data-theme="warm"] .glass,
+html[data-theme="warm"] .glass-strong,
+html[data-theme="warm"] .bg-panel {
+  background-color: rgba(244,226,198,.30);
+}
+html[data-theme="warm"] .listen-green-button,
+html[data-theme="warm"] .settings-choice-active,
+html[data-theme="warm"] .settings-select,
+html[data-theme="warm"] .nav-active {
+  background: rgba(151,112,74,.92) !important;
+  border-color: rgba(124,89,58,.95) !important;
+}
+html[data-theme="lavender"] {
+  --primary: 263 22% 52%;
+  --ring: 263 22% 52%;
+  --accent: 266 30% 62%;
+}
+html[data-theme="lavender"] .glass,
+html[data-theme="lavender"] .glass-strong,
+html[data-theme="lavender"] .bg-panel {
+  background-color: rgba(231,222,240,.29);
+}
+html[data-theme="lavender"] .listen-green-button,
+html[data-theme="lavender"] .settings-choice-active,
+html[data-theme="lavender"] .settings-select,
+html[data-theme="lavender"] .nav-active {
+  background: rgba(119,98,139,.92) !important;
+  border-color: rgba(94,75,113,.95) !important;
+}
