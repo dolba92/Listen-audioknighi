@@ -1,57 +1,102 @@
-/* ДОБАВИТЬ В КОНЕЦ ТЕКУЩЕГО index.css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
-/* Единый нормальный интерфейсный шрифт вместо моноширинного. */
-.font-mono-ui {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-  letter-spacing: 0 !important;
+:root {
+  --background: 30 33% 96%;
+  --foreground: 240 10% 3.9%;
+  --card: 30 33% 98%;
+  --card-foreground: 240 10% 3.9%;
+  --card-border: 30 20% 90%;
+  --primary: 142 71% 45%;
+  --primary-foreground: 355 100% 100%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 36%;
+  --accent: 142 60% 50%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 142 71% 45%;
+  --radius: 0.5rem;
+  --sidebar: 30 33% 96%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 240 5.9% 90%;
 }
-
-/* Кнопка "Открыть книгу" — тот же зелёный, что и остальные основные кнопки. */
-.listen-green-button {
-  background: rgba(104, 128, 82, 0.92) !important;
-  color: #fff !important;
-  border: 1px solid rgba(82, 105, 62, 0.95) !important;
-  box-shadow: 0 5px 14px rgba(63, 82, 47, 0.18);
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
+.dark {
+  --background: 240 10% 3.9%; --foreground: 0 0% 98%; --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%; --card-border: 240 3.7% 15.9%;
+  --primary: 142 71% 45%; --primary-foreground: 355 100% 100%;
+  --secondary: 240 3.7% 15.9%; --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%; --muted-foreground: 240 5% 72%;
+  --accent: 142 60% 50%; --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%; --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%; --input: 240 3.7% 15.9%; --ring: 142 71% 45%;
+  --sidebar: 240 5.9% 10%; --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 0 0% 98%; --sidebar-border: 240 3.7% 15.9%;
 }
-
-/* Плеер: полоса и подписи должны читаться поверх фоновой картинки. */
-.range-reset {
-  height: 8px;
+body {
+  background-color: hsl(var(--background)); color: hsl(var(--foreground));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1; letter-spacing: -0.01em;
 }
-.range-reset::-webkit-slider-runnable-track {
-  height: 8px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.82);
+.font-display { font-family: 'Playfair Display', Georgia, serif !important; letter-spacing: -0.02em; }
+.font-mono-ui { font-family: 'Inter', system-ui, -apple-system, sans-serif !important; letter-spacing: 0 !important; }
+.animate-rise { animation: rise 0.5s ease-out both; }
+.animate-fade { animation: fade 0.3s ease-out both; }
+.animate-pulse-soft { animation: pulseSoft 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+.listen-grain { position: relative; }
+.listen-grain::before {
+  content:''; position:fixed; inset:0; pointer-events:none; opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
-.range-reset::-webkit-slider-thumb {
-  height: 18px;
-  width: 18px;
-  margin-top: -5px;
+.deep-shadow { box-shadow:0 24px 50px -20px rgba(20,24,35,.32); }
+.glass {
+  background:rgba(255,255,255,.28); -webkit-backdrop-filter:blur(18px) saturate(125%);
+  backdrop-filter:blur(18px) saturate(125%); border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 10px 32px rgba(25,31,45,.10), inset 0 1px 0 rgba(255,255,255,.55);
 }
-
-/* "Готово" справа больше не теряется на книгах и наушниках. */
-.player-status-badge {
-  color: hsl(var(--foreground));
-  background: rgba(255, 255, 255, 0.64);
-  border: 1px solid rgba(255, 255, 255, 0.92);
-  border-radius: 9999px;
-  padding: 7px 11px;
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
-  backdrop-filter: blur(12px) saturate(120%);
-  box-shadow: 0 5px 16px rgba(25, 31, 45, 0.12);
+.glass-strong {
+  background:rgba(255,255,255,.42); -webkit-backdrop-filter:blur(24px) saturate(130%);
+  backdrop-filter:blur(24px) saturate(130%); border:1px solid rgba(255,255,255,.82);
+  box-shadow:0 18px 46px rgba(25,31,45,.14), inset 0 1px 0 rgba(255,255,255,.68);
 }
-
-.dark .player-status-badge {
-  background: rgba(15, 23, 42, 0.78);
-  border-color: rgba(255, 255, 255, 0.18);
+.dark .glass { background:rgba(15,23,42,.64); border-color:rgba(255,255,255,.13); }
+.dark .glass-strong { background:rgba(15,23,42,.82); border-color:rgba(255,255,255,.16); }
+.bg-panel {
+  background:rgba(255,255,255,.32); -webkit-backdrop-filter:blur(20px) saturate(125%);
+  backdrop-filter:blur(20px) saturate(125%); border:1px solid rgba(255,255,255,.74);
+  box-shadow:0 12px 34px rgba(25,31,45,.10), inset 0 1px 0 rgba(255,255,255,.55);
 }
-
-/* На телефоне крупный логотип не раздувает верхнюю панель. */
-@media (max-width: 767px) {
-  header [data-testid="link-logo"] img {
-    width: 58px !important;
-    height: 58px !important;
-  }
+.dark .bg-panel { background:rgba(15,23,42,.72); border-color:rgba(255,255,255,.12); }
+.glass input:not([type='range']),.glass textarea,.glass select,.glass-strong input:not([type='range']),.glass-strong textarea,.glass-strong select { background-color:rgba(255,255,255,.50); }
+.dark .glass input:not([type='range']),.dark .glass textarea,.dark .glass select,.dark .glass-strong input:not([type='range']),.dark .glass-strong textarea,.dark .glass-strong select { background-color:rgba(15,23,42,.68); }
+.cover-art { display:flex; flex-direction:column; justify-content:flex-end; color:white; }
+.cover-sage{background:linear-gradient(135deg,#86efac,#22c55e)} .cover-clay{background:linear-gradient(135deg,#fdba74,#f97316)}
+.cover-ochre{background:linear-gradient(135deg,#fde047,#eab308)} .cover-ink{background:linear-gradient(135deg,#a5b4fc,#6366f1)}
+.cover-moss{background:linear-gradient(135deg,#a3e635,#65a30d)}
+.tone-dot{width:28px;height:28px;border-radius:9999px;cursor:pointer}.tone-sage{background:#86efac}.tone-clay{background:#fdba74}.tone-ochre{background:#fde047}.tone-ink{background:#a5b4fc}.tone-moss{background:#a3e635}
+.range-reset{-webkit-appearance:none;appearance:none;background:transparent;height:8px}
+.range-reset::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;height:18px;width:18px;border-radius:50%;background:hsl(var(--primary));cursor:pointer;margin-top:-5px}
+.range-reset::-webkit-slider-runnable-track{height:8px;border-radius:9999px;background:rgba(255,255,255,.82)}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}} @keyframes fade{from{opacity:0}to{opacity:1}} @keyframes pulseSoft{0%,100%{opacity:1}50%{opacity:.4}}
+.search-glass {
+  background:rgba(255,255,255,.30); -webkit-backdrop-filter:blur(22px) saturate(125%);
+  backdrop-filter:blur(22px) saturate(125%); border:1px solid rgba(255,255,255,.88);
+  box-shadow:0 8px 24px rgba(25,31,45,.12), inset 0 1px 0 rgba(255,255,255,.72);
 }
+.search-glass:focus-within{background:rgba(255,255,255,.46);border-color:rgba(255,255,255,.98);box-shadow:0 10px 28px rgba(25,31,45,.16),0 0 0 2px rgba(80,120,75,.10)}
+.dark .search-glass{background:rgba(15,23,42,.76);border-color:rgba(255,255,255,.16)}
+@media(min-width:768px){aside.glass{background:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(6px) saturate(108%);backdrop-filter:blur(6px) saturate(108%);border-right:1px solid rgba(255,255,255,.52);box-shadow:inset -1px 0 0 rgba(255,255,255,.20)}}
+.nav-active{background:rgba(104,128,82,.88)!important;color:#fff!important;border:1px solid rgba(82,105,62,.92)!important;box-shadow:0 5px 14px rgba(63,82,47,.18)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.nav-active svg{color:#fff}
+.listen-green-button,.settings-choice-active,.settings-select{background:rgba(104,128,82,.92)!important;color:#fff!important;border:1px solid rgba(82,105,62,.95)!important;box-shadow:0 5px 14px rgba(63,82,47,.18);-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.settings-choice{background:rgba(104,128,82,.18);color:hsl(var(--foreground));border:1px solid rgba(82,105,62,.28)}
+.settings-choice:hover{background:rgba(104,128,82,.28)} .settings-choice-active:hover{background:rgba(104,128,82,1)!important}
+.settings-select{cursor:pointer}.settings-select option{color:#111;background:#f2f1e5}
+.player-status-badge{color:hsl(var(--foreground));background:rgba(255,255,255,.64);border:1px solid rgba(255,255,255,.92);border-radius:9999px;padding:7px 11px;-webkit-backdrop-filter:blur(12px) saturate(120%);backdrop-filter:blur(12px) saturate(120%);box-shadow:0 5px 16px rgba(25,31,45,.12)}
+.dark .player-status-badge{background:rgba(15,23,42,.78);border-color:rgba(255,255,255,.18)}
+@media(max-width:767px){header [data-testid="link-logo"] img{width:58px!important;height:58px!important}}
