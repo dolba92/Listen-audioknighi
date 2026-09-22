@@ -93,15 +93,10 @@ function SkeletonHome() {
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
-    <section className="flex min-h-[220px] items-center justify-center px-4 py-10" data-testid="state-empty-library">
-      <button
-        onClick={onAdd}
-        className="listen-green-button inline-flex h-12 whitespace-nowrap items-center justify-center gap-2 rounded-full px-7 text-sm font-bold transition-transform hover:-translate-y-0.5"
-        data-testid="button-empty-add"
-      >
-        <Plus className="size-4 shrink-0" />
-        <span>Добавить книгу</span>
-      </button>
+    <section className="glass mx-auto flex min-h-[260px] w-full max-w-[980px] flex-col items-center justify-center rounded-[30px] px-6 py-12 text-center" data-testid="state-empty-library">
+      <h2 className="font-display text-3xl font-semibold md:text-4xl">Ваша библиотека ждёт первую историю</h2>
+      <p className="mt-3 max-w-xl text-base font-medium text-foreground/70">Здесь будут храниться ваши аудиокниги — всегда под рукой, когда захочется продолжить слушать.</p>
+      <button onClick={onAdd} className="listen-green-button mt-7 inline-flex h-12 whitespace-nowrap items-center justify-center gap-2 rounded-full px-7 text-sm font-bold transition-transform hover:-translate-y-0.5" data-testid="button-empty-add"><Plus className="size-4 shrink-0" /><span>Добавить книгу</span></button>
     </section>
   );
 }
@@ -131,10 +126,11 @@ function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () =
           {book.completed && <span className="absolute right-3 top-3 grid size-7 place-items-center rounded-full bg-card text-primary shadow-sm"><Check className="size-4" /></span>}
         </div>
       </button>
-      <div className="mt-2 flex items-start justify-between gap-2">
-        <button onClick={onOpen} className="min-w-0 text-left" data-testid={`button-title-${book.id}`}><h3 className="truncate text-sm font-semibold">{book.title}</h3><p className="mt-0.5 truncate text-xs text-muted-foreground">{book.author}</p></button>
-        <BookMenu book={book} onEdit={onEdit} onDelete={onDelete} />
+      <div className="mt-2 flex min-w-0 items-center gap-1">
+        <button onClick={onOpen} className="min-w-0 flex-1 text-left" data-testid={`button-title-${book.id}`}><h3 className="truncate whitespace-nowrap text-sm font-semibold">{book.title}</h3></button>
+        <div className="shrink-0"><BookMenu book={book} onEdit={onEdit} onDelete={onDelete} /></div>
       </div>
+      <button onClick={onOpen} className="block w-full min-w-0 text-left" data-testid={`button-author-${book.id}`}><p className="mt-0.5 truncate whitespace-nowrap text-xs text-muted-foreground">{book.author}</p></button>
       <div className="mt-1.5 flex items-center gap-2"><ProgressBar value={book.percentage} className="flex-1" /><span className="text-sm font-bold text-foreground/85">{Math.round(book.percentage)}%</span></div>
     </article>
   );
