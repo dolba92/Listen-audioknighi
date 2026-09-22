@@ -225,9 +225,9 @@ body {
 /* Левая панель: максимально прозрачная, фон хорошо виден. */
 @media (min-width: 768px) {
   aside.glass {
-    background: rgba(255, 255, 255, 0.12);
-    -webkit-backdrop-filter: blur(10px) saturate(112%);
-    backdrop-filter: blur(10px) saturate(112%);
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(6px) saturate(108%);
+    backdrop-filter: blur(6px) saturate(108%);
     border-right: 1px solid rgba(255,255,255,.52);
     box-shadow: inset -1px 0 0 rgba(255,255,255,.20);
   }
@@ -243,3 +243,25 @@ body {
   backdrop-filter: none !important;
 }
 .nav-active svg { color: #fff; }
+
+
+/* Однотонные зелёные элементы — без стекла на стекле. */
+.listen-green-button,
+.settings-choice-active,
+.settings-select {
+  background: rgba(104, 128, 82, 0.92) !important;
+  color: #fff !important;
+  border: 1px solid rgba(82, 105, 62, 0.95) !important;
+  box-shadow: 0 5px 14px rgba(63, 82, 47, 0.18);
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.settings-choice {
+  background: rgba(104, 128, 82, 0.18);
+  color: hsl(var(--foreground));
+  border: 1px solid rgba(82, 105, 62, 0.28);
+}
+.settings-choice:hover { background: rgba(104, 128, 82, 0.28); }
+.settings-choice-active:hover { background: rgba(104, 128, 82, 1) !important; }
+.settings-select { cursor: pointer; }
+.settings-select option { color: #111; background: #f2f1e5; }
