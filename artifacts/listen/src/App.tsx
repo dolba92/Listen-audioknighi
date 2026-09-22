@@ -106,9 +106,9 @@ function BookMenu({ book, onEdit, onDelete }: { book: Book; onEdit: () => void; 
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)} className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" aria-label="Действия с книгой" data-testid={`button-menu-${book.id}`}><MoreHorizontal className="size-5" /></button>
-      {open && <div className="absolute bottom-11 right-0 z-50 w-44 rounded-2xl border border-card-border glass-strong p-1.5 shadow-lg animate-fade" data-testid={`menu-book-${book.id}`}>
-        <button onClick={() => { setOpen(false); onEdit(); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs hover:bg-secondary" data-testid={`button-edit-${book.id}`}><Pencil className="size-3.5" /> Изменить данные</button>
-        <button onClick={() => { setOpen(false); onDelete(); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs text-destructive hover:bg-destructive/10" data-testid={`button-delete-${book.id}`}><Trash2 className="size-3.5" /> Удалить книгу</button>
+      {open && <div className="book-action-menu absolute bottom-11 right-0 z-50 w-44 rounded-2xl p-1.5 shadow-lg animate-fade" data-testid={`menu-book-${book.id}`}>
+        <button onClick={() => { setOpen(false); onEdit(); }} className="book-action-item flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold" data-testid={`button-edit-${book.id}`}><Pencil className="size-3.5" /> Изменить данные</button>
+        <button onClick={() => { setOpen(false); onDelete(); }} className="book-action-item book-action-delete flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-semibold" data-testid={`button-delete-${book.id}`}><Trash2 className="size-3.5" /> Удалить книгу</button>
       </div>}
     </div>
   );
@@ -417,7 +417,7 @@ function PlayerPage() {
             boxShadow: '0 14px 40px rgba(48, 58, 37, 0.14)'
           }}
         ><p className="text-lg font-extrabold text-foreground">Сейчас слушаете</p><h1 className="mt-3 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] sm:text-5xl">{book.title}</h1><p className="mt-4 text-lg text-muted-foreground">{book.author}</p>{book.narrator && <p className="mt-1 text-xs text-muted-foreground/75">Читает {book.narrator}</p>}{book.description && <p className="mt-7 max-w-md text-sm leading-6 text-muted-foreground">{book.description}</p>}
-          <div className="mt-10"><input type="range" min="0" max={duration || 1} step="0.1" value={Math.min(current, duration || 1)} onChange={(event) => seek(Number(event.target.value))} className="range-reset w-full cursor-pointer" style={{ background: `linear-gradient(to right, #62824f 0%, #62824f ${Math.min(100, Math.max(0, percentage))}%, rgba(255,255,255,0.92) ${Math.min(100, Math.max(0, percentage))}%, rgba(255,255,255,0.92) 100%)` }} aria-label="Позиция воспроизведения" disabled={!src} data-testid="input-player-timeline" /><div className="mt-3 flex justify-between text-sm font-bold text-foreground/80"><span>{formatTime(current)}</span><span>{formatTime(duration)}</span></div></div>
+          <div className="mt-10"><input type="range" min="0" max={duration || 1} step="0.1" value={Math.min(current, duration || 1)} onChange={(event) => seek(Number(event.target.value))} className="range-reset w-full cursor-pointer" style={{ background: `linear-gradient(to right, #62824f 0%, #62824f ${Math.min(100, Math.max(0, percentage))}%, rgba(255,255,255,0.62) ${Math.min(100, Math.max(0, percentage))}%, rgba(255,255,255,0.62) 100%)` }} aria-label="Позиция воспроизведения" disabled={!src} data-testid="input-player-timeline" /><div className="mt-3 flex justify-between text-sm font-bold text-foreground/80"><span>{formatTime(current)}</span><span>{formatTime(duration)}</span></div></div>
           <div className="mt-7 flex items-center justify-between gap-2"><button onClick={changeSpeed} className="listen-green-button flex h-10 items-center gap-2 rounded-full px-3 text-xs font-semibold transition-transform hover:-translate-y-0.5" data-testid="button-player-speed"><Zap className="size-3.5 text-accent-foreground" /> {speed.toFixed(2)}×</button><div className="flex items-center gap-3"><button onClick={() => skip(-15)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Назад 15 секунд" data-testid="button-skip-back"><SkipBack className="size-5" /></button><button onClick={() => void toggle()} className="listen-green-button grid size-16 place-items-center rounded-full shadow-md transition-transform hover:scale-105" aria-label={playing ? 'Пауза' : 'Воспроизвести'} data-testid="button-player-toggle">{playing ? <Pause className="size-6 fill-current" /> : <Play className="ml-1 size-6 fill-current" />}</button><button onClick={() => skip(30)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Вперёд 30 секунд" data-testid="button-skip-forward"><SkipForward className="size-5" /></button></div><span className="listen-green-button min-w-[92px] rounded-full px-4 py-2.5 text-center text-sm font-bold">{src ? 'Готово' : 'Нет файла'}</span></div>
           {notice && <button onClick={() => setNotice('')} className="mt-5 flex w-full items-center justify-between rounded-xl bg-accent/20 px-4 py-3 text-left text-xs text-foreground" data-testid="status-player-notice"><span>{notice}</span><X className="size-4" /></button>}
         </div>
@@ -436,13 +436,40 @@ function SettingsPage() {
     return SPEEDS.includes(storedSpeed) ? storedSpeed : 1;
   });
   const [, setLocation] = useLocation();
-  useEffect(() => { document.documentElement.classList.toggle('dark', theme === 'dark'); localStorage.setItem('listen-theme', theme); }, [theme]);
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('listen-theme', theme);
+  }, [theme]);
   const selectSpeed = (value: number) => { setDefaultSpeed(value); localStorage.setItem('listen-speed', String(value)); };
   const clear = async () => { if (window.confirm('Удалить все книги и файлы из Listen? Это действие нельзя отменить.')) { await clearLibrary(); setLocation('/'); } };
   return (
     <div className="mx-auto max-w-3xl animate-rise"><h1 className="font-display text-5xl font-semibold tracking-[-.04em] sm:text-6xl">Настройки</h1>
       <div className="mt-7 space-y-4">
-        <SettingGroup title="Внешний вид" icon={<Leaf className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-lg font-bold">Тема интерфейса</h2><p className="mt-1 text-base text-muted-foreground">Светлая палитра сохраняет ощущение дня.</p></div><div className="flex gap-2"><button onClick={() => setTheme('light')} className={`settings-choice rounded-full px-4 py-2 text-sm font-semibold ${theme === 'light' ? 'settings-choice-active' : ''}`} data-testid="button-theme-light">Светлая</button><button onClick={() => setTheme('dark')} className={`settings-choice rounded-full px-4 py-2 text-sm font-semibold ${theme === 'dark' ? 'settings-choice-active' : ''}`} data-testid="button-theme-dark"><Moon className="mr-1 inline size-3.5" /> Тёмный лес</button></div></div></SettingGroup>
+        <SettingGroup title="Внешний вид" icon={<Leaf className="size-4" />}>
+          <div>
+            <h2 className="text-lg font-bold">Тема интерфейса</h2>
+            <p className="mt-1 text-base text-muted-foreground">Выберите оттенок стекла и акцентов.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {[
+                ['light', 'Светлая'],
+                ['sage', 'Шалфей'],
+                ['warm', 'Тёплая'],
+                ['lavender', 'Лаванда'],
+                ['dark', 'Тёмный лес'],
+              ].map(([value, label]) => (
+                <button
+                  key={value}
+                  onClick={() => setTheme(value)}
+                  className={`settings-choice rounded-full px-4 py-2 text-sm font-semibold ${theme === value ? 'settings-choice-active' : ''}`}
+                  data-testid={`button-theme-${value}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </SettingGroup>
         <SettingGroup title="Воспроизведение" icon={<Headphones className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-lg font-bold">Скорость по умолчанию</h2><p className="mt-1 text-base text-muted-foreground">Можно изменить в плеере в любой момент.</p></div><select value={defaultSpeed} onChange={(event) => selectSpeed(Number(event.target.value))} className="settings-select h-11 rounded-full px-4 text-sm font-semibold outline-none" data-testid="select-default-speed">{SPEEDS.map((value) => <option key={value} value={value}>{value.toFixed(2)}×</option>)}</select></div></SettingGroup>
         <SettingGroup title="Управление библиотекой" icon={<Library className="size-4" />}><div className="flex items-center justify-between gap-4"><div><h2 className="text-lg font-bold">Книг в библиотеке</h2><p className="mt-1 text-base text-muted-foreground">Аудио и обложки хранятся только в этом браузере.</p></div><span className="text-lg font-bold text-primary">{books.length}</span></div><div className="mt-5 border-t border-border pt-5"><button onClick={() => void clear()} className="inline-flex items-center gap-2 text-sm font-semibold text-destructive transition-colors hover:text-destructive/70" data-testid="button-clear-library"><Trash2 className="size-4" /> Очистить всю библиотеку</button></div></SettingGroup>
       </div>
