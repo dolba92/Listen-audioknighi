@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: 30 33% 96%;
+  --foreground: 240 10% 3.9%;
+  --card: 30 33% 98%;
+  --card-foreground: 240 10% 3.9%;
+  --card-border: 30 20% 90%;
+  --primary: 142 71% 45%;
+  --primary-foreground: 355 100% 100%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 36%;
+  --accent: 142 60% 50%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 142 71% 45%;
+  --radius: 0.5rem;
+  --sidebar: 30 33% 96%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 240 5.9% 90%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --card-border: 240 3.7% 15.9%;
+  --primary: 142 71% 45%;
+  --primary-foreground: 355 100% 100%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 72%;
+  --accent: 142 60% 50%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 142 71% 45%;
+  --sidebar: 240 5.9% 10%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 3.7% 15.9%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  letter-spacing: -0.01em;
+}
+
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  letter-spacing: -0.02em;
+}
+
+.font-mono-ui {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  letter-spacing: 0.05em;
+}
+
+.animate-rise { animation: rise 0.5s ease-out both; }
+.animate-fade { animation: fade 0.3s ease-out both; }
+.animate-pulse-soft { animation: pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+.listen-grain { position: relative; }
+.listen-grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.deep-shadow { box-shadow: 0 24px 50px -20px rgba(20, 24, 35, 0.32); }
+
+/* Матовое стекло: только внешний вид. Размеры и расположение элементов не меняются. */
+.glass {
+  background: rgba(255, 255, 255, 0.64);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  backdrop-filter: blur(18px) saturate(125%);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 32px rgba(25, 31, 45, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+  backdrop-filter: blur(24px) saturate(130%);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 46px rgba(25, 31, 45, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.68);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.64);
+  border-color: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.dark .glass-strong {
+  background: rgba(15, 23, 42, 0.82);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Все существующие bg-panel становятся тем же читаемым матовым стеклом. */
+.bg-panel {
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(125%);
+  backdrop-filter: blur(20px) saturate(125%);
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  box-shadow: 0 12px 34px rgba(25, 31, 45, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.dark .bg-panel {
+  background: rgba(15, 23, 42, 0.72);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Поля внутри модалок остаются светлыми и хорошо читаемыми поверх фона. */
+.glass input:not([type='range']),
+.glass textarea,
+.glass select,
+.glass-strong input:not([type='range']),
+.glass-strong textarea,
+.glass-strong select {
+  background-color: rgba(255, 255, 255, 0.72);
+}
+
+.dark .glass input:not([type='range']),
+.dark .glass textarea,
+.dark .glass select,
+.dark .glass-strong input:not([type='range']),
+.dark .glass-strong textarea,
+.dark .glass-strong select {
+  background-color: rgba(15, 23, 42, 0.68);
+}
+
+.cover-art { display: flex; flex-direction: column; justify-content: flex-end; color: white; }
+.cover-sage { background: linear-gradient(135deg, #86efac, #22c55e); }
+.cover-clay { background: linear-gradient(135deg, #fdba74, #f97316); }
+.cover-ochre { background: linear-gradient(135deg, #fde047, #eab308); }
+.cover-ink { background: linear-gradient(135deg, #a5b4fc, #6366f1); }
+.cover-moss { background: linear-gradient(135deg, #a3e635, #65a30d); }
+
+.tone-dot { width: 28px; height: 28px; border-radius: 9999px; cursor: pointer; }
+.tone-sage { background: #86efac; }
+.tone-clay { background: #fdba74; }
+.tone-ochre { background: #fde047; }
+.tone-ink { background: #a5b4fc; }
+.tone-moss { background: #a3e635; }
+
+.range-reset { -webkit-appearance: none; appearance: none; background: transparent; height: 6px; }
+.range-reset::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  cursor: pointer;
+  margin-top: -5px;
+}
+.range-reset::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: hsl(var(--secondary));
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulseSoft { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+
+/* Поиск — отдельная аккуратная стеклянная капсула. */
+.search-glass {
+  background: rgba(255, 255, 255, 0.76);
+  -webkit-backdrop-filter: blur(22px) saturate(125%);
+  backdrop-filter: blur(22px) saturate(125%);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  box-shadow: 0 8px 24px rgba(25, 31, 45, 0.12), inset 0 1px 0 rgba(255,255,255,.72);
+}
+.search-glass:focus-within {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 28px rgba(25, 31, 45, 0.16), 0 0 0 2px rgba(80, 120, 75, 0.10);
+}
+.dark .search-glass {
+  background: rgba(15, 23, 42, 0.76);
+  border-color: rgba(255,255,255,.16);
+}
