@@ -138,7 +138,7 @@ function BookCard({ book, onOpen, onEdit, onDelete }: { book: Book; onOpen: () =
 
 function ContinueCard({ book, onOpen }: { book: Book; onOpen: () => void }) {
   return (
-    <section className="relative overflow-hidden rounded-[28px] glass-strong px-5 py-5 text-foreground deep-shadow md:px-8 md:py-7" data-testid="card-continue">
+    <section className="relative overflow-hidden rounded-[28px] glass-strong settings-like-glass px-5 py-5 text-foreground deep-shadow md:px-8 md:py-7" data-testid="card-continue">
       <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
         <Cover book={book} size="sm" />
         <div className="min-w-0 flex-1">
@@ -169,7 +169,7 @@ function HomePage({ onAdd }: { onAdd: () => void }) {
   if (books.length === 0) return <EmptyState onAdd={onAdd} />;
   return (
     <div className="space-y-6 md:space-y-7">
-      <header className="relative animate-rise rounded-[26px] glass px-5 py-4 md:px-6 md:py-5">
+      <header className="relative animate-rise rounded-[26px] glass settings-like-glass px-5 py-4 md:px-6 md:py-5">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div><h1 className="font-display text-4xl font-semibold leading-none tracking-[-.04em] sm:text-4xl">Моя библиотека</h1></div>
           <button onClick={onAdd} className="listen-green-button inline-flex h-11 items-center justify-center gap-2 self-start rounded-full px-5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5 md:self-auto" data-testid="button-add-book"><Plus className="size-4" /> Добавить книгу</button>
@@ -510,7 +510,7 @@ function AppShell({ children, onAdd }: { children: ReactNode; onAdd: () => void 
 
   return (
     <div className="listen-grain min-h-[100dvh]">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border glass px-5 py-7 md:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col border-r border-sidebar-border glass settings-like-glass px-5 py-7 md:flex">
         <Logo />
         <p className="mt-10 px-4 text-[20px] font-bold tracking-[-.01em] text-foreground/85">Навигация</p>
         <nav className="mt-3 space-y-1">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-base font-semibold transition-colors ${location === href ? 'nav-active text-sidebar-accent-foreground' : 'text-muted-foreground hover:bg-white/10 hover:text-foreground'}`} data-testid={`link-nav-${label}`}><Icon className="size-[24px]" /> {label}</Link>)}</nav>
