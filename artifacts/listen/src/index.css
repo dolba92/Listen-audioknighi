@@ -212,7 +212,7 @@ html[data-theme="lavender"] .nav-active {
 
 /* Home: marked panels use the same transparent glass feel as Settings cards */
 .settings-like-glass {
-  background: rgba(255, 255, 255, .8) !important;
+  background: rgba(255, 255, 255, .30) !important;
   -webkit-backdrop-filter: blur(2px) saturate(125%) !important;
   backdrop-filter: blur(2px) saturate(125%) !important;
   border-color: rgba(255, 255, 255, .64) !important;
