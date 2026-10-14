@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import type { AudioChapter } from '@/lib/m4b-chapters';
+
 export type Book = {
   id: string;
   title: string;
@@ -11,6 +13,7 @@ export type Book = {
   percentage: number;
   completed: boolean;
   speed: number;
+  chapters?: AudioChapter[];
   audioBlob?: Blob;
   audioName?: string;
   audioType?: string;
@@ -28,6 +31,7 @@ export type BookDraft = Pick<
   audioName: string;
   audioType: string;
   coverBlob?: Blob;
+  chapters?: AudioChapter[];
   duration?: number;
 };
 
