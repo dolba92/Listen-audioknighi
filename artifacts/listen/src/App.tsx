@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { BookOpen, Check, ChevronLeft, CircleHelp, Clock3, FileAudio, Headphones, Leaf, Library, Menu, Moon, MoreHorizontal, Pause, Pencil, Play, Plus, RotateCcw, Search, Settings, SkipBack, SkipForward, SlidersHorizontal, Sparkles, Trash2, Volume2, X, Zap } from 'lucide-react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation, useParams } from 'wouter';
 import { useLibrary, type Book, type BookDraft } from '@/hooks/use-library';
+import { readM4bChapters, type AudioChapter } from '@/lib/m4b-chapters';
 
 const queryClient = new QueryClient();
 const SPEEDS = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
@@ -194,6 +195,7 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
   const [description, setDescription] = useState(book?.description ?? '');
   const [tone, setTone] = useState(book?.coverTone ?? TONES[Math.floor(Math.random() * TONES.length)]);
   const [audio, setAudio] = useState<File | null>(null);
+  const [chapters, setChapters] = useState<AudioChapter[]>(book?.chapters ?? []);
   const [duration, setDuration] = useState(book?.duration ?? 0);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState('');
@@ -207,6 +209,10 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     const file = event.target.files?.[0];
     if (!file) return;
     setAudio(file);
+    setChapters([]);
+    if (/\.m4b$/i.test(file.name) || /mp4|m4b|m4a/.test(file.type)) {
+      setChapters(await readM4bChapters(file));
+    }
 
     if (!book) {
       const details = inferBookDetails(file.name);
@@ -223,7 +229,10 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     try {
       const { parseBlob } = await import('music-metadata');
       const metadata = await parseBlob(file, { skipCovers: false });
-      console.log('🎵 Метаданные:', metadata);
+      if (!book) {
+        if (metadata.common.title) setTitle(metadata.common.title);
+        if (metadata.common.artist || metadata.common.albumartist) setAuthor(metadata.common.artist || metadata.common.albumartist || '');
+      }
 
       const pictures = metadata.common.picture ?? [];
       const picture = pictures.find((item) => item.type?.toLowerCase().includes('front')) ?? pictures[0];
@@ -273,7 +282,7 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
           coverTone: tone,
           coverBlob: coverFile || book.coverBlob,
         };
-        if (audio) { patch.audioBlob = audio; patch.audioName = audio.name; patch.audioType = audio.type; patch.duration = duration; patch.position = 0; patch.percentage = 0; patch.completed = false; }
+        if (audio) { patch.audioBlob = audio; patch.audioName = audio.name; patch.audioType = audio.type; patch.duration = duration; patch.position = 0; patch.percentage = 0; patch.completed = false; patch.chapters = chapters; }
         await updateBook(book.id, patch);
       } else if (audio) {
         const details = inferBookDetails(audio.name);
@@ -287,6 +296,7 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
           audioName: audio.name,
           audioType: audio.type,
           duration,
+          chapters,
           coverBlob: coverFile || undefined,
         });
       }
@@ -341,6 +351,9 @@ function PlayerPage() {
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(book?.speed ?? 1);
   const [notice, setNotice] = useState('');
+  const chapters = book?.chapters ?? [];
+  const chapterIndex = chapters.reduce((found, chapter, index) => current + 0.05 >= chapter.start ? index : found, -1);
+  const jumpChapter = (index: number) => { if (index >= 0 && index < chapters.length) seek(chapters[index].start); };
   useEffect(() => {
     if (!book?.audioBlob) { setSrc(''); restoredPositionRef.current = false; return; }
     const url = URL.createObjectURL(book.audioBlob);
@@ -416,7 +429,7 @@ function PlayerPage() {
             backdropFilter: 'blur(18px) saturate(125%)',
             boxShadow: '0 14px 40px rgba(48, 58, 37, 0.14)'
           }}
-        ><p className="text-lg font-extrabold text-foreground">Сейчас слушаете</p><h1 className="mt-3 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] sm:text-5xl">{book.title}</h1><p className="mt-4 text-lg text-muted-foreground">{book.author}</p>{book.narrator && <p className="mt-1 text-xs text-muted-foreground/75">Читает {book.narrator}</p>}{book.description && <p className="mt-7 max-w-md text-sm leading-6 text-muted-foreground">{book.description}</p>}
+        ><p className="text-lg font-extrabold text-foreground">Сейчас слушаете</p><h1 className="mt-3 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] sm:text-5xl">{book.title}</h1><p className="mt-4 text-lg text-muted-foreground">{book.author}</p>{book.narrator && <p className="mt-1 text-xs text-muted-foreground/75">Читает {book.narrator}</p>}{chapterIndex >= 0 && <p className="mt-3 text-sm font-semibold text-primary" data-testid="current-chapter">{chapters[chapterIndex].title}</p>}{book.description && <p className="mt-7 max-w-md text-sm leading-6 text-muted-foreground">{book.description}</p>}
           <div className="mt-10">
             <div className="relative h-5">
               <div className="pointer-events-none absolute left-0 right-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-full bg-white/70">
@@ -441,10 +454,12 @@ function PlayerPage() {
             <div className="mt-3 flex justify-between text-sm font-bold text-foreground/80"><span>{formatTime(current)}</span><span>{formatTime(duration)}</span></div>
           </div>
           <div className="mt-7 flex items-center justify-between gap-2"><button onClick={changeSpeed} className="listen-green-button flex h-10 items-center gap-2 rounded-full px-3 text-xs font-semibold transition-transform hover:-translate-y-0.5" data-testid="button-player-speed"><Zap className="size-3.5 text-accent-foreground" /> {speed.toFixed(2)}×</button><div className="flex items-center gap-3"><button onClick={() => skip(-15)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Назад 15 секунд" data-testid="button-skip-back"><SkipBack className="size-5" /></button><button onClick={() => void toggle()} className="listen-green-button grid size-16 place-items-center rounded-full shadow-md transition-transform hover:scale-105" aria-label={playing ? 'Пауза' : 'Воспроизвести'} data-testid="button-player-toggle">{playing ? <Pause className="size-6 fill-current" /> : <Play className="ml-1 size-6 fill-current" />}</button><button onClick={() => skip(30)} disabled={!src} className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Вперёд 30 секунд" data-testid="button-skip-forward"><SkipForward className="size-5" /></button></div><span className="listen-green-button min-w-[92px] rounded-full px-4 py-2.5 text-center text-sm font-bold">{src ? 'Готово' : 'Нет файла'}</span></div>
+          {chapters.length > 0 && <div className="mt-6 flex items-center justify-between gap-3 rounded-xl bg-secondary/50 p-3"><button type="button" className="rounded-lg px-3 py-2 text-xs font-semibold hover:bg-secondary disabled:opacity-30" disabled={chapterIndex <= 0} onClick={() => jumpChapter(chapterIndex - 1)} aria-label="Предыдущая глава">← Глава</button><span className="text-center text-xs font-medium">{Math.max(1, chapterIndex + 1)} / {chapters.length}</span><button type="button" className="rounded-lg px-3 py-2 text-xs font-semibold hover:bg-secondary disabled:opacity-30" disabled={chapterIndex >= chapters.length - 1} onClick={() => jumpChapter(chapterIndex + 1)} aria-label="Следующая глава">Глава →</button></div>}
           {notice && <button onClick={() => setNotice('')} className="mt-5 flex w-full items-center justify-between rounded-xl bg-accent/20 px-4 py-3 text-left text-xs text-foreground" data-testid="status-player-notice"><span>{notice}</span><X className="size-4" /></button>}
         </div>
       </div>
       {src && <audio ref={audioRef} src={src} preload="auto" onLoadedMetadata={(event) => { const value = event.currentTarget.duration; if (Number.isFinite(value) && value > 0) { durationRef.current = value; setDuration(value); if (!book.duration) void updateBook(book.id, { duration: value }); } const start = Math.min(Math.max(book.position, 0), Number.isFinite(value) && value > 0 ? value : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; }} onCanPlay={(event) => { if (!restoredPositionRef.current) { const start = Math.min(Math.max(book.position, 0), Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; } }} onTimeUpdate={(event) => { const value = event.currentTarget.currentTime; positionRef.current = value; setCurrent(value); if (Date.now() - persistAt.current > 1200) { persistAt.current = Date.now(); persistPosition(value); } }} onPlay={() => { setNotice(''); setPlaying(true); }} onPause={(event) => { setPlaying(false); persistPosition(event.currentTarget.currentTime); }} onEnded={() => { setPlaying(false); persistPosition(durationRef.current || duration, true); }} onError={() => { setPlaying(false); setNotice('Не удалось прочитать аудиофайл. Выберите этот файл заново в редактировании книги.'); }} data-testid="audio-player" />}
+      {chapters.length > 0 && <section className="mt-10 rounded-2xl bg-panel p-5" data-testid="chapter-list"><h2 className="mb-4 font-display text-2xl font-semibold">Оглавление · {chapters.length} глав</h2><div className="max-h-80 space-y-1 overflow-y-auto">{chapters.map((chapter, index) => <button key={`${index}-${chapter.start}`} onClick={() => jumpChapter(index)} className={`flex w-full items-center justify-between gap-4 rounded-xl px-4 py-3 text-left text-sm hover:bg-secondary ${index === chapterIndex ? 'bg-secondary font-bold text-primary' : ''}`} aria-current={index === chapterIndex ? 'true' : undefined}><span className="min-w-0 flex-1">{chapter.title}</span><span className="shrink-0 text-xs opacity-70">{formatTime(chapter.start)}</span></button>)}</div></section>}
       <div className="mt-14 grid gap-4 border-t border-border pt-7 sm:grid-cols-3"><div className="rounded-2xl bg-panel p-5"><Clock3 className="size-5 text-primary" /><p className="mt-3 text-lg font-bold">{formatTime(duration)}</p><p className="mt-1 text-sm font-medium text-muted-foreground">Полная длительность</p></div><div className="rounded-2xl bg-panel p-5"><SlidersHorizontal className="size-5 text-primary" /><p className="mt-3 text-lg font-bold">{Math.round(percentage)}%</p><p className="mt-1 text-sm font-medium text-muted-foreground">Уже прослушано</p></div><div className="rounded-2xl bg-panel p-5"><Headphones className="size-5 text-primary" /><p className="mt-3 text-lg font-bold">{book.completed ? 'Завершено' : 'В процессе'}</p><p className="mt-1 text-sm font-medium text-muted-foreground">Состояние книги</p></div></div>
     </div>
   );
