@@ -7,6 +7,7 @@ import { BookOpen, Check, ChevronLeft, CircleHelp, Clock3, FileAudio, Headphones
 import { Link, Route, Switch, Router as WouterRouter, useLocation, useParams } from 'wouter';
 import { useLibrary, type Book, type BookDraft } from '@/hooks/use-library';
 import { readM4bChapters, type AudioChapter } from '@/lib/m4b-chapters';
+import { readMp3Chapters } from '@/lib/id3-chapters';
 
 const queryClient = new QueryClient();
 const SPEEDS = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
@@ -210,8 +211,10 @@ function BookFormModal({ book, onClose }: { book?: Book; onClose: () => void }) 
     if (!file) return;
     setAudio(file);
     setChapters([]);
-    if (/\.m4b$/i.test(file.name) || /mp4|m4b|m4a/.test(file.type)) {
+    if (/\.m4b$|\.m4a$/i.test(file.name) || /mp4|m4b|m4a/.test(file.type)) {
       setChapters(await readM4bChapters(file));
+    } else if (/\.mp3$/i.test(file.name) || /mpeg|mp3/.test(file.type)) {
+      setChapters(await readMp3Chapters(file));
     }
 
     if (!book) {
