@@ -539,3 +539,46 @@ html[data-theme='night-lavender'] .book-action-menu {
   background: rgba(104, 128, 82, 1) !important;
   border-color: rgba(82, 105, 62, 1) !important;
 }
+
+
+/* iPhone/Safari: keep the bookcase background behind rubber-band scrolling,
+   and prevent the page from stretching horizontally or vertically. */
+html {
+  min-height: 100%;
+  overflow-x: clip;
+  overscroll-behavior: none;
+  background-color: #e7e7d9;
+  background-image: url('/background.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+body {
+  min-height: 100dvh;
+  overflow-x: clip;
+  overscroll-behavior: none;
+}
+#root {
+  min-height: 100dvh;
+  overflow-x: clip;
+}
+@media (max-width: 767px) {
+  /* A fixed viewport layer stays still while Safari's address bar changes. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -2px;
+    z-index: 0;
+    pointer-events: none;
+    background: url('/background.png') center center / cover no-repeat;
+    transform: translateZ(0);
+  }
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+  .listen-grain {
+    background: transparent;
+  }
+}
