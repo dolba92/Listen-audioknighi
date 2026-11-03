@@ -348,6 +348,7 @@ function PlayerPage() {
   const positionRef = useRef(book?.position ?? 0);
   const durationRef = useRef(book?.duration ?? 0);
   const restoredPositionRef = useRef(false);
+  const pendingSeekRef = useRef<number | null>(null);
   const [src, setSrc] = useState('');
   const [current, setCurrent] = useState(book?.position ?? 0);
   const [duration, setDuration] = useState(book?.duration ?? 0);
@@ -362,6 +363,7 @@ function PlayerPage() {
     const url = URL.createObjectURL(book.audioBlob);
     setSrc(url);
     restoredPositionRef.current = false;
+    pendingSeekRef.current = null;
     return () => URL.revokeObjectURL(url);
   }, [book?.id, book?.audioBlob]);
   useEffect(() => {
@@ -403,13 +405,24 @@ function PlayerPage() {
     }
   };
   const seek = (value: number) => {
-    const next = Math.min(duration || Number.POSITIVE_INFINITY, Math.max(0, value));
-    if (audioRef.current) audioRef.current.currentTime = next;
+    const next = Math.min(durationRef.current || Number.POSITIVE_INFINITY, Math.max(0, value));
+    pendingSeekRef.current = next;
     positionRef.current = next;
     setCurrent(next);
     persistPosition(next);
+    const audio = audioRef.current;
+    if (audio && audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      try { audio.currentTime = next; } catch { /* Safari may need to finish loading metadata */ }
+    }
   };
-  const skip = (amount: number) => seek((audioRef.current?.currentTime ?? positionRef.current) + amount);
+  const skip = (amount: number) => seek(positionRef.current + amount);
+  const applyPendingSeek = (audio: HTMLAudioElement) => {
+    const target = pendingSeekRef.current;
+    if (target === null || audio.readyState < HTMLMediaElement.HAVE_METADATA) return;
+    try {
+      if (Math.abs(audio.currentTime - target) > 0.5) audio.currentTime = target;
+    } catch { /* Retry once Safari has a seekable range */ }
+  };
   const changeSpeed = () => {
     const index = SPEEDS.indexOf(speed);
     const next = SPEEDS[(index < 0 ? 0 : index + 1) % SPEEDS.length];
@@ -469,7 +482,66 @@ function PlayerPage() {
           {notice && <button onClick={() => setNotice('')} className="mt-5 flex w-full items-center justify-between rounded-xl bg-accent/20 px-4 py-3 text-left text-xs text-foreground" data-testid="status-player-notice"><span>{notice}</span><X className="size-4" /></button>}
         </div>
       </div>
-      {src && <audio ref={audioRef} src={src} preload="auto" onLoadedMetadata={(event) => { const value = event.currentTarget.duration; if (Number.isFinite(value) && value > 0) { durationRef.current = value; setDuration(value); if (!book.duration) void updateBook(book.id, { duration: value }); } const start = Math.min(Math.max(book.position, 0), Number.isFinite(value) && value > 0 ? value : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; }} onCanPlay={(event) => { if (!restoredPositionRef.current) { const start = Math.min(Math.max(book.position, 0), Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : Math.max(book.position, 0)); event.currentTarget.currentTime = start; positionRef.current = start; setCurrent(start); restoredPositionRef.current = true; } }} onTimeUpdate={(event) => { const value = event.currentTarget.currentTime; positionRef.current = value; setCurrent(value); if (Date.now() - persistAt.current > 1200) { persistAt.current = Date.now(); persistPosition(value); } }} onPlay={() => { setNotice(''); setPlaying(true); }} onPause={(event) => { setPlaying(false); persistPosition(event.currentTarget.currentTime); }} onEnded={() => { setPlaying(false); persistPosition(durationRef.current || duration, true); }} onError={() => { setPlaying(false); setNotice('Не удалось прочитать аудиофайл. Выберите этот файл заново в редактировании книги.'); }} data-testid="audio-player" />}
+      {src && <audio
+        ref={audioRef}
+        src={src}
+        preload="auto"
+        onLoadedMetadata={(event) => {
+          const audio = event.currentTarget;
+          const value = audio.duration;
+          if (Number.isFinite(value) && value > 0) {
+            durationRef.current = value;
+            setDuration(value);
+            if (!book.duration) void updateBook(book.id, { duration: value });
+          }
+          if (!restoredPositionRef.current) {
+            pendingSeekRef.current = Math.min(Math.max(positionRef.current, 0), Number.isFinite(value) && value > 0 ? value : Math.max(positionRef.current, 0));
+            restoredPositionRef.current = true;
+          }
+          applyPendingSeek(audio);
+        }}
+        onCanPlay={(event) => applyPendingSeek(event.currentTarget)}
+        onSeeked={(event) => {
+          const target = pendingSeekRef.current;
+          if (target === null) return;
+          const actual = event.currentTarget.currentTime;
+          if (Math.abs(actual - target) > 0.5) {
+            applyPendingSeek(event.currentTarget);
+            return;
+          }
+          pendingSeekRef.current = null;
+          positionRef.current = actual;
+          setCurrent(actual);
+          persistPosition(actual);
+        }}
+        onTimeUpdate={(event) => {
+          if (pendingSeekRef.current !== null) {
+            if (Math.abs(event.currentTarget.currentTime - pendingSeekRef.current) <= 0.5) {
+              pendingSeekRef.current = null;
+            } else {
+              return;
+            }
+          }
+          const value = event.currentTarget.currentTime;
+          positionRef.current = value;
+          setCurrent(value);
+          if (Date.now() - persistAt.current > 1200) {
+            persistAt.current = Date.now();
+            persistPosition(value);
+          }
+        }}
+        onPlay={() => { setNotice(''); setPlaying(true); }}
+        onPause={(event) => {
+          setPlaying(false);
+          if (pendingSeekRef.current === null) persistPosition(event.currentTarget.currentTime);
+        }}
+        onEnded={() => {
+          setPlaying(false);
+          if (pendingSeekRef.current === null) persistPosition(durationRef.current || duration, true);
+        }}
+        onError={() => { setPlaying(false); setNotice('Не удалось прочитать аудиофайл. Выберите этот файл заново в редактировании книги.'); }}
+        data-testid="audio-player"
+      />}
       {chapters.length > 0 && <section className="mt-10 rounded-2xl bg-panel p-5" data-testid="chapter-list"><h2 className="mb-4 font-display text-2xl font-semibold">Оглавление · {chapters.length} глав</h2><div className="max-h-80 space-y-1 overflow-y-auto">{chapters.map((chapter, index) => <button key={`${index}-${chapter.start}`} onClick={() => jumpChapter(index)} className={`flex w-full items-center justify-between gap-4 rounded-xl px-4 py-3 text-left text-sm hover:bg-secondary ${index === chapterIndex ? 'bg-secondary font-bold text-primary' : ''}`} aria-current={index === chapterIndex ? 'true' : undefined}><span className="min-w-0 flex-1">{chapter.title}</span><span className="shrink-0 text-xs opacity-70">{formatTime(chapter.start)}</span></button>)}</div></section>}
       <div className="mt-14 grid gap-4 border-t border-border pt-7 sm:grid-cols-3"><div className="rounded-2xl bg-panel p-5"><Clock3 className="size-5 text-primary" /><p className="mt-3 text-lg font-bold">{formatTime(duration)}</p><p className="mt-1 text-sm font-medium text-muted-foreground">Полная длительность</p><p className="mt-3 text-sm font-semibold text-foreground/80">Осталось: {formatTime(Math.max(0, duration - current) / speed)} при {speed.toFixed(2)}×</p></div><div className="rounded-2xl bg-panel p-5"><SlidersHorizontal className="size-5 text-primary" /><p className="mt-3 text-lg font-bold">{Math.round(percentage)}%</p><p className="mt-1 text-sm font-medium text-muted-foreground">Уже прослушано</p></div><div className="rounded-2xl bg-panel p-5"><Headphones className="size-5 text-primary" /><p className="mt-3 text-lg font-bold">{book.completed ? 'Завершено' : 'В процессе'}</p><p className="mt-1 text-sm font-medium text-muted-foreground">Состояние книги</p></div></div>
     </div>
