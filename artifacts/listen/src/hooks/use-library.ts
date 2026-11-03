@@ -300,6 +300,13 @@ export function useLibrary() {
       setBooks(booksRef.current);
       saveProgress(updated);
 
+      // Playback progress is already persisted in localStorage. Avoid rewriting
+      // the entire audio Blob to IndexedDB on every timeupdate (especially iOS Safari).
+      const progressOnly = Object.keys(patch).every((key) =>
+        ['position', 'percentage', 'completed', 'speed'].includes(key),
+      );
+      if (progressOnly) return;
+
       try {
         await writeBook(updated);
       } catch (error) {
