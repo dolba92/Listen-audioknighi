@@ -452,18 +452,18 @@ function PlayerPage() {
   if (!book) return <section className="rounded-[28px] bg-panel p-12 text-center" data-testid="state-player-error"><CircleHelp className="mx-auto size-8 text-primary" /><h1 className="mt-4 font-display text-4xl font-semibold">Книга не найдена</h1><button onClick={() => setLocation('/')} className="mt-6 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground" data-testid="button-back-library">Вернуться в библиотеку</button></section>;
   const percentage = duration > 0 ? (current / duration) * 100 : book.percentage;
   return (
-    <div className="mx-auto max-w-5xl animate-rise">
+    <div className="mx-auto max-w-6xl animate-rise">
       <button onClick={() => setLocation('/')} className="mb-8 inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground" data-testid="button-player-back"><ChevronLeft className="size-4" /> Вернуться к библиотеке</button>
-      <div className="grid items-center gap-10 md:grid-cols-[minmax(260px,360px)_1fr] md:gap-16">
-        <div className="relative mx-auto w-full max-w-[245px]"><Cover book={book} size="lg" /><div className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-2xl bg-accent text-foreground shadow-lg"><Volume2 className="size-5" /></div></div>
+      <div className="grid items-center gap-10 md:grid-cols-[minmax(320px,420px)_1fr] md:gap-16 lg:gap-20">
+        <div className="relative mx-auto w-full max-w-[320px] md:max-w-[380px] lg:max-w-[420px]"><Cover book={book} size="lg" /><div className="absolute -bottom-4 -right-4 grid size-14 place-items-center rounded-2xl bg-accent text-foreground shadow-lg"><Volume2 className="size-5" /></div></div>
         <div
           className="min-w-0 rounded-[28px] border px-7 py-7 md:px-8 md:py-8"
           style={{
-            background: 'rgba(255, 255, 255, 0.48)',
-            borderColor: 'rgba(255, 255, 255, 0.82)',
+            background: 'rgba(255, 255, 255, 0.58)',
+            borderColor: 'rgba(255, 255, 255, 0.88)',
             WebkitBackdropFilter: 'blur(18px) saturate(125%)',
             backdropFilter: 'blur(18px) saturate(125%)',
-            boxShadow: '0 14px 40px rgba(48, 58, 37, 0.14)'
+            boxShadow: '0 14px 40px rgba(48, 58, 37, 0.16)'
           }}
         ><p className="text-lg font-extrabold text-foreground">Сейчас слушаете</p><h1 className="mt-3 font-display text-4xl font-semibold leading-[.95] tracking-[-.03em] sm:text-5xl">{book.title}</h1><p className="mt-4 text-lg text-muted-foreground">{book.author}</p>{book.narrator && <p className="mt-1 text-xs text-muted-foreground/75">Читает {book.narrator}</p>}{chapterIndex >= 0 && <p className="mt-3 text-sm font-semibold text-primary" data-testid="current-chapter">{chapters[chapterIndex].title}</p>}{book.description && <p className="mt-7 max-w-md text-sm leading-6 text-muted-foreground">{book.description}</p>}
           <div className="mt-10">

@@ -26,10 +26,10 @@
   --sidebar-accent-foreground: 240 5.9% 10%;
   --sidebar-border: 240 5.9% 90%;
 
-  --glass-bg: rgba(255,255,255,.12);
-  --glass-strong-bg: rgba(255,255,255,.15);
-  --panel-bg: rgba(255,255,255,.12);
-  --glass-border: rgba(255,255,255,.68);
+  --glass-bg: rgba(255,255,255,.18);
+  --glass-strong-bg: rgba(255,255,255,.22);
+  --panel-bg: rgba(255,255,255,.18);
+  --glass-border: rgba(255,255,255,.78);
   --glass-blur: 5px;
   --glass-saturation: 108%;
   --button-bg: rgba(104,128,82,.92);
@@ -152,7 +152,7 @@ body {
 }
 
 .search-glass {
-  background: rgba(255,255,255,.20);
+  background: rgba(255,255,255,.34);
   -webkit-backdrop-filter: blur(5px) saturate(108%);
   backdrop-filter: blur(5px) saturate(108%);
   border: 1px solid rgba(255,255,255,.78);
@@ -160,7 +160,7 @@ body {
 }
 
 .search-glass:focus-within {
-  background: rgba(255,255,255,.28);
+  background: rgba(255,255,255,.34);
   border-color: rgba(255,255,255,.95);
 }
 
@@ -170,7 +170,7 @@ body {
 .glass-strong input:not([type='range']),
 .glass-strong textarea,
 .glass-strong select {
-  background-color: rgba(255,255,255,.42);
+  background-color: rgba(255,255,255,.50);
 }
 
 .cover-art { display:flex; flex-direction:column; justify-content:flex-end; color:white; }
@@ -293,10 +293,10 @@ body {
 
 /* Светлая — такое же прозрачное стекло, как у шалфея, без белых "простыней". */
 html[data-theme='light'] {
-  --glass-bg: rgba(255,255,255,.10);
-  --glass-strong-bg: rgba(255,255,255,.13);
-  --panel-bg: rgba(255,255,255,.10);
-  --glass-border: rgba(255,255,255,.70);
+  --glass-bg: rgba(255,255,255,.16);
+  --glass-strong-bg: rgba(255,255,255,.20);
+  --panel-bg: rgba(255,255,255,.16);
+  --glass-border: rgba(255,255,255,.80);
   --glass-blur: 4px;
   --glass-saturation: 106%;
   --button-bg: rgba(104,128,82,.92);
