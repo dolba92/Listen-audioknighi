@@ -582,3 +582,20 @@ body {
     background: transparent;
   }
 }
+
+
+/* Плеер: оглавление и нижние информационные карточки — более читаемое стекло. */
+[data-testid="chapter-list"],
+.listen-grain main .mt-14.grid > .bg-panel {
+  background: rgba(250, 249, 241, .68);
+}
+
+html[data-theme='dark'] [data-testid="chapter-list"],
+html[data-theme='dark'] .listen-grain main .mt-14.grid > .bg-panel {
+  background: rgba(26, 36, 31, .86);
+}
+
+html[data-theme='night-lavender'] [data-testid="chapter-list"],
+html[data-theme='night-lavender'] .listen-grain main .mt-14.grid > .bg-panel {
+  background: rgba(43, 35, 57, .86);
+}
