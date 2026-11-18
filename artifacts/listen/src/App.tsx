@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { BookOpen, Check, ChevronLeft, CircleHelp, Clock3, FileAudio, Headphones, Leaf, Library, Menu, Moon, MoreHorizontal, Pause, Pencil, Play, Plus, RotateCcw, RotateCw, Search, Settings, SlidersHorizontal, Sparkles, Trash2, Volume2, X, Zap } from 'lucide-react';
+import { BookOpen, Check, ChevronLeft, CircleHelp, Clock3, FileAudio, Headphones, Leaf, Library, Menu, Moon, MoreHorizontal, Pause, Pencil, Play, Plus, RotateCcw, RotateCw, Search, Settings, SlidersHorizontal, Sparkles, Trash2, Volume2, VolumeX, X, Zap } from 'lucide-react';
 import { Link, Route, Switch, Router as WouterRouter, useLocation, useParams } from 'wouter';
 import { useLibrary, type Book, type BookDraft } from '@/hooks/use-library';
 import { readM4bChapters, type AudioChapter } from '@/lib/m4b-chapters';
@@ -354,6 +354,16 @@ function PlayerPage() {
   const [duration, setDuration] = useState(book?.duration ?? 0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(book?.speed ?? 1);
+  const [volume, setVolume] = useState(() => {
+    try {
+      const stored = localStorage.getItem('listen-volume');
+      const saved = stored === null ? 1 : Number(stored);
+      return Number.isFinite(saved) && saved >= 0 && saved <= 1 ? saved : 1;
+    } catch { return 1; }
+  });
+  const [previousVolume, setPreviousVolume] = useState(1);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
   const [notice, setNotice] = useState('');
   const chapters = book?.chapters ?? [];
   const chapterIndex = chapters.reduce((found, chapter, index) => current + 0.05 >= chapter.start ? index : found, -1);
@@ -379,6 +389,16 @@ function PlayerPage() {
   useEffect(() => {
     if (audioRef.current) { audioRef.current.playbackRate = speed; }
   }, [speed, src]);
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = volume;
+    try { localStorage.setItem('listen-volume', String(volume)); } catch { /* storage may be unavailable */ }
+  }, [volume, src]);
+  const changeVolume = (next: number) => {
+    const safe = Math.max(0, Math.min(1, next));
+    if (safe > 0) setPreviousVolume(safe);
+    setVolume(safe);
+  };
+  const toggleMute = () => changeVolume(volume > 0 ? 0 : previousVolume || 1);
   const persistPosition = (value: number, completedOverride?: boolean) => {
     if (!book) return;
     const total = durationRef.current || audioRef.current?.duration || 0;
@@ -477,6 +497,15 @@ function PlayerPage() {
               <button onClick={() => void toggle()} className="listen-green-button grid size-16 shrink-0 place-items-center rounded-full shadow-md transition-transform hover:scale-105" aria-label={playing ? 'Пауза' : 'Воспроизвести'} data-testid="button-player-toggle">{playing ? <Pause className="size-6 fill-current" /> : <Play className="ml-1 size-6 fill-current" />}</button>
               <button onClick={() => skip(15)} disabled={!src} className="relative grid size-12 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary disabled:opacity-35" aria-label="Вперёд 15 секунд" title="Вперёд 15 секунд" data-testid="button-skip-forward"><RotateCw className="size-6" /><span className="absolute text-[9px] font-bold leading-none">15</span></button>
             </div>
+          </div>
+          <div className="mt-5 rounded-xl bg-secondary/40 px-4 py-3" data-testid="player-volume-control">
+            <div className="flex items-center gap-3">
+              <button type="button" onClick={toggleMute} disabled={isIOS} className="grid size-9 shrink-0 place-items-center rounded-full text-foreground/75 hover:bg-secondary disabled:opacity-60" aria-label={volume === 0 ? 'Включить звук' : 'Выключить звук'} title={volume === 0 ? 'Включить звук' : 'Выключить звук'} data-testid="button-player-mute">{volume === 0 ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}</button>
+              <label htmlFor="player-volume" className="shrink-0 text-xs font-semibold">Громкость</label>
+              <input id="player-volume" type="range" min="0" max="100" step="1" value={Math.round(volume * 100)} disabled={isIOS} onChange={(event) => changeVolume(Number(event.target.value) / 100)} className="min-w-0 flex-1 cursor-pointer accent-[#62824f] disabled:cursor-not-allowed disabled:opacity-50" aria-label="Громкость воспроизведения" data-testid="input-player-volume" />
+              <span className="w-10 shrink-0 text-right text-xs font-semibold tabular-nums">{Math.round(volume * 100)}%</span>
+            </div>
+            {isIOS && <p className="mt-2 text-xs text-muted-foreground">На iPhone и iPad громкость регулируется боковыми кнопками устройства.</p>}
           </div>
           {chapters.length > 0 && <div className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-secondary/50 p-3 sm:flex-nowrap sm:gap-3"><button type="button" className="rounded-lg px-3 py-2 text-xs font-semibold hover:bg-secondary disabled:opacity-30" disabled={chapterIndex <= 0} onClick={() => jumpChapter(chapterIndex - 1)} aria-label="Предыдущая глава">← Глава</button><span className="order-first w-full text-center text-xs font-medium sm:order-none sm:w-auto">{Math.max(1, chapterIndex + 1)} / {chapters.length}</span><button type="button" className="rounded-lg px-3 py-2 text-xs font-semibold hover:bg-secondary disabled:opacity-30" disabled={chapterIndex >= chapters.length - 1} onClick={() => jumpChapter(chapterIndex + 1)} aria-label="Следующая глава">Глава →</button></div>}
           {notice && <button onClick={() => setNotice('')} className="mt-5 flex w-full items-center justify-between rounded-xl bg-accent/20 px-4 py-3 text-left text-xs text-foreground" data-testid="status-player-notice"><span>{notice}</span><X className="size-4" /></button>}
